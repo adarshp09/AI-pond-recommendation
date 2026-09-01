@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+      name="description"
+      content="AI-powered pond recommendation system using terrain, hydrology, suitability analysis, and GIS visualization."
+    >
+
+    <title>AI Pond Recommendation</title>
+
+    <!-- Leaflet CSS -->
+    <!-- SRI integrity removed to avoid the current hash mismatch -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- Application CSS -->
+    <link
+      rel="stylesheet"
+      href="style.css"
+    >
+  </head>
+
+  <body>
+
+    <header class="app-header">
+      <h1>AI Pond Recommendation</h1>
+
+      <p>
+        Contour upload, terrain validation, hydrology,
+        suitability, and GIS review.
+      </p>
+    </header>
+
+    <!-- Main application -->
+    <main class="app-container">
+
+      <!-- Upload / Analysis Section -->
+      <section class="analysis-panel">
+
+        <h2>Terrain Analysis</h2>
+
+        <form id="analysis-form">
+
+          <div class="form-group">
+            <label for="contour-file">
+              Upload Contour KML
+            </label>
+
+            <input
+              id="contour-file"
+              name="file"
+              type="file"
+              accept=".kml,.kmz"
+              required
+            >
+            <div id="selectedFilename" class="file-name">No file selected</div>
+          </div>
+
+          <button
+            id="analyze-button"
+            type="submit"
+          >
+            Analyze Terrain
+          </button>
+
+        </form>
+
+        <!-- Loading indicator -->
+        <div
+          id="loading"
+          class="loading hidden"
+        >
+          Analyzing contour data...
+        </div>
+
+        <div class="location-selection-panel">
+          <h3>Select Location on Map</h3>
+
+          <button
+            id="location-select-button"
+            type="button"
+            class="secondary-button"
+          >
+            Select Location on Map
+          </button>
+
+          <div class="location-fields">
+            <label>
+              Latitude
+              <input id="selected-latitude" type="text" value="Not selected" readonly>
+            </label>
+
+            <label>
+              Longitude
+              <input id="selected-longitude" type="text" value="Not selected" readonly>
+            </label>
+
+            <label>
+              Radius (km)
+              <input id="location-radius" type="number" min="0.1" max="100" step="0.1" value="10" >
+            </label>
+          </div>
+
+          <button
+            id="analyze-location-button"
+            type="button"
+            disabled
+          >
+            Analyze Location
+          </button>
+
+          <div
+            id="location-loading"
+            class="loading hidden"
+          >
+            Analyzing selected location...
+          </div>
+
+          <div id="location-analysis-result" class="location-result">
+            No location selected yet.
+          </div>
+        </div>
+
+        <!-- Error message -->
+        <div
+          id="error-message"
+          class="error-message hidden"
+        ></div>
+
+      </section>
+
+      <!-- Results Section -->
+      <section
+        id="results"
+        class="results-panel"
+      >
+
+        <h2>Analysis Results</h2>
+
+        <div class="result-grid">
+          <div class="panel">
+            <h3>Summary</h3>
+            <div id="summaryGrid" class="metric-grid"></div>
+          </div>
+
+          <div class="panel">
+            <h3>Catchment</h3>
+            <div id="catchmentGrid" class="metric-grid"></div>
+          </div>
+
+          <div class="panel">
+            <h3>Suitability</h3>
+            <div id="suitabilityGrid" class="metric-grid"></div>
+          </div>
+        </div>
+
+        <p id="recommendationText" class="recommendation-text"></p>
+        <ul id="warningsList" class="warnings"></ul>
+      </section>
+
+      <!-- GIS Map -->
+      <section class="map-section">
+
+        <h2>GIS Visualization</h2>
+
+        <div
+          id="map"
+          class="map-container"
+        ></div>
+
+      </section>
+
+    </main>
+
+    <!-- Leaflet JavaScript -->
+    <!-- SRI integrity removed here as well -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
+
+    <!-- Application JavaScript -->
+    <script src="app.js"></script>
+
+  </body>
+</html>

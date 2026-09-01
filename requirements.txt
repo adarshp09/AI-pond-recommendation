@@ -1,0 +1,27 @@
+# API framework
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+python-multipart==0.0.20
+
+# Environment variables
+python-dotenv==1.1.1
+
+# Numerical computing
+numpy==2.2.6
+scipy==1.15.3
+
+# Geospatial processing
+shapely==2.1.1
+pyproj==3.7.1
+geopandas==1.1.1
+
+# KML/KMZ parsing
+lxml==6.0.0
+
+# HTTP requests - OpenTopography / future APIs
+requests==2.32.4
+httpx==0.28.1
+
+# Testing
+pytest==8.4.1
+pytest-asyncio==1.1.0
