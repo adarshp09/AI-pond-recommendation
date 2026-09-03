@@ -13,6 +13,7 @@ from fastapi import (
     FastAPI,
     File,
     HTTPException,
+    Response,
     UploadFile,
 )
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,7 +27,7 @@ from catchment import (
 )
 from dem_validation import validate_dem
 from hydrology import analyze_hydrology
-from models import LocationAnalysisRequest
+from models import DEM, LocationAnalysisRequest, TerrainResult
 from parser import (
     contour_diagnostics,
     parse_contour_file,
@@ -37,9 +38,10 @@ from services.location_service import calculate_analysis_bounds
 from services.place_search_service import search_places
 from services.rainfall_service import fetch_historical_rainfall
 from services.opentopography_service import OpenTopographyError, get_dem_for_bbox
+from services.kml_export_service import generate_kml, generate_kmz
 from suitability import DEFAULT_WEIGHTS, evaluate_pond_suitability
 from recommendation import rank_candidates
-from terrain import analyze_terrain
+from terrain import analyze_terrain, calculate_slope
 
 try:
     from shapely.ops import transform as transform_geometry
@@ -586,16 +588,119 @@ def _validate_filename(
 
 @app.post("/analyzeLocation")
 async def analyze_location(request: LocationAnalysisRequest):
-    """Compute the analysis bounds for a user-selected location and radius."""
+    """Analyze a selected location using its bounds, DEM, terrain, and hydrology."""
     try:
         result = calculate_analysis_bounds(
             request.latitude,
             request.longitude,
             request.radius_km,
         )
-        return _json_safe(result)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail={"code": "INVALID_LOCATION", "message": str(exc)}) from exc
+
+    response = {
+        **result,
+        "status": "failed",
+        "dem": {"status": "unavailable", "source": "OpenTopography Global DEM API"},
+        "terrain": {}, "hydrology": {},
+        "catchment": {"area_m2": 0.0, "area_hectares": 0.0, "area_km2": 0.0, "cell_count": 0, "boundary": None},
+        "suitability": {"status": "unavailable", "overall_score": None, "classification": "unavailable", "component_scores": {}},
+        "pond_candidate": None, "alternative_candidates": [], "warnings": [], "error_code": None, "message": None,
+    }
+    try:
+        dem_payload = get_dem_for_bbox(result["min_longitude"], result["min_latitude"], result["max_longitude"], result["max_latitude"])
+        elevation = np.asarray(dem_payload.get("elevation"), dtype=float)
+        if elevation.ndim != 2 or min(elevation.shape) < 2 or not np.any(np.isfinite(elevation)):
+            raise ValueError("OpenTopography returned an invalid DEM grid.")
+    except (OpenTopographyError, ValueError, TypeError) as exc:
+        raise HTTPException(status_code=502, detail={"code": "DEM_FETCH_ERROR", "message": str(exc)}) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail={"code": "DEM_FETCH_ERROR", "message": str(exc)}) from exc
+
+    rows, columns = elevation.shape
+    center_lat = float(result["center"]["latitude"])
+    center_lon = float(result["center"]["longitude"])
+    lat_resolution_m = abs(result["max_latitude"] - result["min_latitude"]) * 111_320.0 / max(rows - 1, 1)
+    lon_resolution_m = abs(result["max_longitude"] - result["min_longitude"]) * 111_320.0 * max(abs(np.cos(np.radians(center_lat))), 1e-6) / max(columns - 1, 1)
+    resolution_m = max(float((lat_resolution_m + lon_resolution_m) / 2.0), 1.0)
+    slope_degrees, gradient = calculate_slope(elevation, resolution_m)
+    valid_mask = np.isfinite(elevation) & np.isfinite(slope_degrees) & np.isfinite(gradient)
+    dem = DEM(elevation, np.linspace(result["min_longitude"], result["max_longitude"], columns), np.linspace(result["max_latitude"], result["min_latitude"], rows), resolution_m, "EPSG:4326", slope_degrees, gradient, valid_mask)
+    terrain = TerrainResult(dem, float(np.mean(slope_degrees[valid_mask])), float(np.max(slope_degrees[valid_mask])), float(np.mean(valid_mask)))
+    hydrology = analyze_hydrology(elevation, resolution_m, valid_mask)
+    valid_cells = np.argwhere(hydrology.valid_mask & np.isfinite(elevation))
+    if not valid_cells.size:
+        response["error_code"] = "NO_VALID_CANDIDATE"
+        response["message"] = "No valid pond candidate could be derived from the selected area."
+        response["warnings"].append(response["message"])
+        return _json_safe(response)
+
+    rainfall = None
+    land_context = None
+    try:
+        rainfall = _json_safe(fetch_historical_rainfall(center_lat, center_lon, "2024-01-01", "2024-01-31"))
+    except Exception as exc:
+        response["warnings"].append(f"Rainfall data unavailable: {exc}")
+    try:
+        land_context = _json_safe(fetch_land_context(result["min_latitude"], result["min_longitude"], result["max_latitude"], result["max_longitude"]))
+    except Exception as exc:
+        response["warnings"].append(f"Land context unavailable: {exc}")
+
+    outlet = _lowest_valid_cell(elevation, hydrology.valid_mask)
+    catchment_mask = delineate_catchment(hydrology.flow_direction, hydrology.valid_mask, outlet)
+    catchment_stats = catchment_area(catchment_mask, resolution_m)
+    score = _build_suitability({"terrain": terrain.to_dict()}, {"rainfall": rainfall or {}, "land_context": land_context or {}})
+    score["classification"] = "highly_suitable" if score["overall_score"] >= 0.7 else "moderately_suitable" if score["overall_score"] >= 0.4 else "marginal"
+    score["unavailable_factors"] = [name for name, value in {"rainfall": rainfall, "land_use": land_context}.items() if value is None]
+
+    def make_candidate(candidate_id: str, cell: tuple[int, int]) -> dict:
+        cell_mask = delineate_catchment(hydrology.flow_direction, hydrology.valid_mask, cell)
+        stats = catchment_area(cell_mask, resolution_m)
+        candidate = _candidate_from_cell(candidate_id, "Pond Candidate", dem, cell[0], cell[1], stats, score)
+        candidate["factors"] = {"slope_degrees": float(slope_degrees[cell]), "catchment_area_m2": float(stats["area_m2"]), "rainfall_mm": rainfall.get("total_precipitation_mm") if rainfall else None, "water_distance_m": None, "road_distance_m": None, "building_distance_m": None}
+        candidate["land_context"] = land_context or {}
+        return candidate
+
+    cells = [outlet]
+    for cell in find_candidate_outlets(hydrology.flow_direction, hydrology.valid_mask, top_n=8):
+        if cell != outlet and all(abs(cell[0] - old[0]) + abs(cell[1] - old[1]) >= 5 for old in cells):
+            cells.append(cell)
+    ranked = rank_candidates((make_candidate(f"location-{index}", cell) for index, cell in enumerate(cells, 1)), constraints={"min_water_distance_m": -1.0, "min_road_distance_m": -1.0, "min_building_distance_m": -1.0})
+    primary = ranked[0] if ranked else None
+    alternatives = ranked[1:] if ranked else []
+    if primary:
+        primary["label"] = "Recommended Pond"
+        for index, candidate in enumerate(alternatives, 1):
+            candidate["id"] = f"alternative-{index}"
+            candidate["label"] = "Alternative Candidate"
+    response.update({
+        "status": "success" if primary else "failed",
+        "dem": {**dem_payload, "shape": [rows, columns], "resolution_m": resolution_m, "crs": dem.crs},
+        "terrain": terrain.to_dict(),
+        "hydrology": {"flow_direction_shape": list(hydrology.flow_direction.shape), "max_flow_accumulation_cells": float(hydrology.max_accumulation_cells), "mean_flow_accumulation_cells": float(hydrology.mean_accumulation_cells), "sink_cells": int(hydrology.sink_cells), "edge_outflow_cells": int(hydrology.edge_outflow_cells), "valid_cells": int(hydrology.valid_cells), "cell_area_m2": float(hydrology.cell_area_m2)},
+        "catchment": {**catchment_stats, "boundary": _catchment_boundary_geojson(catchment_mask, dem)},
+        "rainfall": rainfall or {"status": "unavailable"}, "land_features": land_context or {"status": "unavailable"},
+        "suitability": score, "pond_candidate": primary, "alternative_candidates": alternatives,
+    })
+    return _json_safe(response)
+
+
+@app.post("/exportLocationKml")
+async def export_location_kml(analysis_result: dict):
+    try:
+        content = generate_kml(analysis_result.get("analysis", analysis_result))
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail={"code": "INVALID_ANALYSIS_RESULT", "message": str(exc)}) from exc
+    return Response(content=content, media_type="application/vnd.google-earth.kml+xml", headers={"Content-Disposition": "attachment; filename=pond-analysis.kml"})
+
+
+@app.post("/exportLocationKmz")
+async def export_location_kmz(analysis_result: dict):
+    try:
+        content = generate_kmz(analysis_result.get("analysis", analysis_result))
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail={"code": "INVALID_ANALYSIS_RESULT", "message": str(exc)}) from exc
+    return Response(content=content, media_type="application/vnd.google-earth.kmz", headers={"Content-Disposition": "attachment; filename=pond-analysis.kmz"})
 
 
 @app.post("/analyzeContour")

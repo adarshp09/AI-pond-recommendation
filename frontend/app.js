@@ -19,6 +19,8 @@ const locationLongitudeInput = el("selected-longitude");
 const locationRadiusInput = el("location-radius");
 const locationLoadingIndicator = el("location-loading");
 const locationAnalysisResult = el("location-analysis-result");
+const exportLocationKmlButton = el("export-location-kml-button");
+const exportLocationKmzButton = el("export-location-kmz-button");
 
 let map;
 let baseLayers = {};
@@ -35,6 +37,24 @@ let locationSelectionMode = false;
 let selectedLocation = null;
 let locationSelectionMarker = null;
 let locationAnalysisCircle = null;
+let latestLocationAnalysis = null;
+
+async function exportLocationAnalysis(endpoint, filename) {
+  if (!latestLocationAnalysis) return;
+  const response = await fetch(`http://localhost:8000/${endpoint}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(latestLocationAnalysis),
+  });
+  if (!response.ok) throw new Error(`Export failed with HTTP ${response.status}.`);
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 function getValue(source, path, fallback = null) {
   return path.reduce((value, key) => {
@@ -716,6 +736,10 @@ if (analyzeLocationButton) {
         throw new Error("Backend returned a malformed location response.");
       }
 
+      latestLocationAnalysis = data;
+      if (exportLocationKmlButton) exportLocationKmlButton.disabled = data.status !== "success";
+      if (exportLocationKmzButton) exportLocationKmzButton.disabled = data.status !== "success";
+
       const center = data.center || {};
       const boundsSummary = `Center: ${Number(center.latitude).toFixed(6)}, ${Number(center.longitude).toFixed(6)} | Bounds: ${Number(data.min_latitude).toFixed(6)} to ${Number(data.max_latitude).toFixed(6)} lat, ${Number(data.min_longitude).toFixed(6)} to ${Number(data.max_longitude).toFixed(6)} lon`;
 
@@ -730,11 +754,33 @@ if (analyzeLocationButton) {
         );
       }
 
+      await renderDashboard(data);
+
       showError("");
     } catch (error) {
       showError(error && typeof error.message === "string" ? error.message : "Location analysis request failed.");
     } finally {
       setLocationLoading(false);
+    }
+  });
+}
+
+if (exportLocationKmlButton) {
+  exportLocationKmlButton.addEventListener("click", async () => {
+    try {
+      await exportLocationAnalysis("exportLocationKml", "pond-analysis.kml");
+    } catch (error) {
+      showError(error?.message || "KML export failed.");
+    }
+  });
+}
+
+if (exportLocationKmzButton) {
+  exportLocationKmzButton.addEventListener("click", async () => {
+    try {
+      await exportLocationAnalysis("exportLocationKmz", "pond-analysis.kmz");
+    } catch (error) {
+      showError(error?.message || "KMZ export failed.");
     }
   });
 }

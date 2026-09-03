@@ -29,13 +29,18 @@ DEFAULT_REJECTION_CONSTRAINTS = {
 
 def _candidate_factors(candidate: Mapping[str, Any]) -> Dict[str, Any]:
     factors = candidate.get("factors", {}) or {}
+
+    def optional_float(name: str) -> Optional[float]:
+        value = factors.get(name)
+        return None if value is None else float(value)
+
     return {
         "slope_degrees": float(factors.get("slope_degrees", 0.0) or 0.0),
         "catchment_area_m2": float(factors.get("catchment_area_m2", 0.0) or 0.0),
-        "rainfall_mm": float(factors.get("rainfall_mm", 0.0) or 0.0),
-        "water_distance_m": float(factors.get("water_distance_m", 0.0) or 0.0),
-        "road_distance_m": float(factors.get("road_distance_m", 0.0) or 0.0),
-        "building_distance_m": float(factors.get("building_distance_m", 0.0) or 0.0),
+        "rainfall_mm": optional_float("rainfall_mm"),
+        "water_distance_m": optional_float("water_distance_m"),
+        "road_distance_m": optional_float("road_distance_m"),
+        "building_distance_m": optional_float("building_distance_m"),
     }
 
 
@@ -80,18 +85,18 @@ def _build_explanation_details(candidate: Mapping[str, Any], score: Mapping[str,
         negative_factors.append("catchment area is below the preferred minimum")
     summary_parts.append(f"catchment score={catchment_score:.2f}")
 
-    if factors["rainfall_mm"] >= DEFAULT_REJECTION_CONSTRAINTS["min_rainfall_mm"]:
+    if factors["rainfall_mm"] is None or factors["rainfall_mm"] >= DEFAULT_REJECTION_CONSTRAINTS["min_rainfall_mm"]:
         positive_factors.append("rainfall supports runoff contribution")
     else:
         negative_factors.append("rainfall is too low for reliable runoff generation")
     summary_parts.append(f"rainfall score={rainfall_score:.2f}")
 
-    if factors["water_distance_m"] >= DEFAULT_REJECTION_CONSTRAINTS["min_water_distance_m"]:
+    if factors["water_distance_m"] is None or factors["water_distance_m"] >= DEFAULT_REJECTION_CONSTRAINTS["min_water_distance_m"]:
         positive_factors.append("distance to water features is acceptable")
     else:
         negative_factors.append("site is too close to an existing water body")
 
-    if factors["road_distance_m"] >= DEFAULT_REJECTION_CONSTRAINTS["min_road_distance_m"] and factors["building_distance_m"] >= DEFAULT_REJECTION_CONSTRAINTS["min_building_distance_m"]:
+    if (factors["road_distance_m"] is None or factors["road_distance_m"] >= DEFAULT_REJECTION_CONSTRAINTS["min_road_distance_m"]) and (factors["building_distance_m"] is None or factors["building_distance_m"] >= DEFAULT_REJECTION_CONSTRAINTS["min_building_distance_m"]):
         positive_factors.append("distance from roads and buildings is acceptable")
     else:
         negative_factors.append("site is close to infrastructure")
@@ -140,13 +145,13 @@ def reject_unsuitable_candidates(
             continue
         if factors["catchment_area_m2"] < active_constraints["min_catchment_area_m2"]:
             continue
-        if factors["rainfall_mm"] < active_constraints["min_rainfall_mm"]:
+        if factors["rainfall_mm"] is not None and factors["rainfall_mm"] < active_constraints["min_rainfall_mm"]:
             continue
-        if factors["water_distance_m"] < active_constraints["min_water_distance_m"]:
+        if factors["water_distance_m"] is not None and factors["water_distance_m"] < active_constraints["min_water_distance_m"]:
             continue
-        if factors["road_distance_m"] < active_constraints["min_road_distance_m"]:
+        if factors["road_distance_m"] is not None and factors["road_distance_m"] < active_constraints["min_road_distance_m"]:
             continue
-        if factors["building_distance_m"] < active_constraints["min_building_distance_m"]:
+        if factors["building_distance_m"] is not None and factors["building_distance_m"] < active_constraints["min_building_distance_m"]:
             continue
 
         accepted.append(dict(candidate))
