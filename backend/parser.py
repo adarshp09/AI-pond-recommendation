@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 from pyproj import Transformer
 
-from models import Contour, ContourData
+from backend.models import Contour, ContourData
 
 
 KML_NS = {
@@ -40,26 +40,29 @@ def _read_kml_file(file_path: Union[str, Path]) -> bytes:
         return path.read_bytes()
 
     if suffix == ".kmz":
-        with zipfile.ZipFile(path, "r") as z:
-            kml_files = [
-                name
-                for name in z.namelist()
-                if name.lower().endswith(".kml")
-            ]
-
-            if not kml_files:
-                raise ValueError("KMZ file does not contain a KML file")
-
-            selected = next(
-                (
+        try:
+            with zipfile.ZipFile(path, "r") as z:
+                kml_files = [
                     name
-                    for name in kml_files
-                    if Path(name).name.lower() == "doc.kml"
-                ),
-                kml_files[0],
-            )
+                    for name in z.namelist()
+                    if name.lower().endswith(".kml")
+                ]
 
-            return z.read(selected)
+                if not kml_files:
+                    raise ValueError("KMZ file does not contain a KML file")
+
+                selected = next(
+                    (
+                        name
+                        for name in kml_files
+                        if Path(name).name.lower() == "doc.kml"
+                    ),
+                    kml_files[0],
+                )
+
+                return z.read(selected)
+        except (zipfile.BadZipFile, OSError) as exc:
+            raise ValueError(f"Invalid or corrupt KMZ archive: {exc}") from exc
 
     raise ValueError(
         "Unsupported file format. Expected .kml or .kmz"
@@ -75,26 +78,29 @@ def _read_kml_bytes(data: bytes, filename: str = "input.kml") -> bytes:
         return data
 
     if suffix == ".kmz":
-        with zipfile.ZipFile(io.BytesIO(data), "r") as z:
-            kml_files = [
-                name
-                for name in z.namelist()
-                if name.lower().endswith(".kml")
-            ]
-
-            if not kml_files:
-                raise ValueError("KMZ file does not contain a KML file")
-
-            selected = next(
-                (
+        try:
+            with zipfile.ZipFile(io.BytesIO(data), "r") as z:
+                kml_files = [
                     name
-                    for name in kml_files
-                    if Path(name).name.lower() == "doc.kml"
-                ),
-                kml_files[0],
-            )
+                    for name in z.namelist()
+                    if name.lower().endswith(".kml")
+                ]
 
-            return z.read(selected)
+                if not kml_files:
+                    raise ValueError("KMZ file does not contain a KML file")
+
+                selected = next(
+                    (
+                        name
+                        for name in kml_files
+                        if Path(name).name.lower() == "doc.kml"
+                    ),
+                    kml_files[0],
+                )
+
+                return z.read(selected)
+        except (zipfile.BadZipFile, OSError) as exc:
+            raise ValueError(f"Invalid or corrupt KMZ archive: {exc}") from exc
 
     raise ValueError(
         "Unsupported file format. Expected .kml or .kmz"

@@ -6,10 +6,20 @@ import numpy as np
 from scipy.interpolate import LinearNDInterpolator
 from scipy.spatial import cKDTree
 
-from models import ContourData, DEM, TerrainResult
+try:
+    from scipy.spatial import QhullError
+except ImportError:  # pragma: no cover - older scipy
+    class QhullError(Exception):
+        pass
+
+from backend.models import ContourData, DEM, TerrainResult
 
 
 DEFAULT_GRID_RESOLUTION_M = 5.0
+
+# LinearNDInterpolator (Qhull/Delaunay) needs at least this many distinct,
+# non-degenerate sample points before it can build a triangulation.
+MIN_INTERPOLATION_SAMPLES = 4
 
 
 # ---------------------------------------------------------------------------
@@ -152,16 +162,29 @@ def _interpolate_dem(
 
     unique_values = values[unique_indices]
 
-    linear = LinearNDInterpolator(
-        unique_points,
-        unique_values,
-        fill_value=np.nan,
-    )
+    if len(unique_points) < MIN_INTERPOLATION_SAMPLES:
+        raise ValueError(
+            "Insufficient contour geometry for DEM interpolation: "
+            f"{len(unique_points)} distinct point(s) found, at least "
+            f"{MIN_INTERPOLATION_SAMPLES} non-degenerate points are required."
+        )
 
-    z_flat = np.asarray(
-        linear(query_points),
-        dtype=float,
-    )
+    try:
+        linear = LinearNDInterpolator(
+            unique_points,
+            unique_values,
+            fill_value=np.nan,
+        )
+
+        z_flat = np.asarray(
+            linear(query_points),
+            dtype=float,
+        )
+    except (QhullError, ValueError) as exc:
+        raise ValueError(
+            "Degenerate contour geometry: the sampled contour points are "
+            f"collinear or coincident and cannot be triangulated ({exc})."
+        ) from exc
 
     z = z_flat.reshape(
         xx.shape
@@ -256,15 +279,21 @@ def calculate_d8_flow(
     resolution_m: float,
     valid_mask: Optional[np.ndarray] = None,
 ):
-    """Backward-compatible alias for the D8 flow-direction utilities."""
+    """Return ``(flow_direction, sink_mask)`` from the D8 utilities.
+
+    .. note::
+       This previously returned ``(flow_direction, flow_direction)`` (the flow
+       direction twice), which was misleading. The second value is now the
+       sink mask.
+    """
     from hydrology import calculate_d8_flow_direction
 
-    flow_direction, sink_mask, edge_outflow_mask = calculate_d8_flow_direction(
+    flow_direction, sink_mask, _ = calculate_d8_flow_direction(
         dem,
         resolution_m,
         valid_mask,
     )
-    return flow_direction, flow_direction
+    return flow_direction, sink_mask
 
 
 def calculate_flow_accumulation(
@@ -316,6 +345,11 @@ def build_dem(
             "DEM shape mismatch: "
             f"expected {(len(y), len(x))}, "
             f"got {elevation.shape}"
+        )
+
+    if not np.any(np.isfinite(elevation)):
+        raise ValueError(
+            "DEM interpolation produced no finite elevation cells."
         )
 
     slope_degrees, gradient = calculate_slope(

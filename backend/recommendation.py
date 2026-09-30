@@ -5,7 +5,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional
 
 from dotenv import load_dotenv
 
-from suitability import DEFAULT_WEIGHTS, evaluate_pond_suitability
+from backend.suitability import DEFAULT_WEIGHTS, evaluate_pond_suitability
 
 load_dotenv()
 

@@ -1,0 +1,2788 @@
+{
+  "generated_at": "2026-09-28T09:06:49.086426+00:00",
+  "mode": "mocked",
+  "external_latency_ms": 0.0,
+  "levels_requested": [
+    1
+  ],
+  "results": [
+    {
+      "fixture": "valid_kml",
+      "filename": "fixture_valid.kml",
+      "input_bytes": 1219,
+      "levels": [
+        {
+          "concurrency": 1,
+          "requests": 5,
+          "total_seconds": 0.7983,
+          "throughput_rps": 6.263,
+          "success_count": 5,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 5
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 159.54,
+            "p50": 159.575,
+            "p95": 164.085,
+            "p99": 164.085,
+            "max": 164.085
+          },
+          "cpu_seconds": 0.7944,
+          "cpu_user_seconds": 0.7876,
+          "cpu_sys_seconds": 0.0067,
+          "cpu_utilization_percent": 99.5,
+          "peak_rss_kb": 125456.0,
+          "tracemalloc_peak_kb": 1669.13,
+          "stages_ms_mean": {
+            "DEM": 1.357,
+            "DEM_validation": 4.221,
+            "candidates_deduplication": 0.139,
+            "candidates_filtering": 0.061,
+            "candidates_generation": 1.305,
+            "candidates_ranking": 0.27,
+            "catchment": 27.053,
+            "diagnostics": 0.501,
+            "hydrology": 110.332,
+            "parsing": 0.931,
+            "recommendation": 0.753,
+            "request": 158.618,
+            "suitability": 0.129,
+            "upload_validation": 0.039
+          },
+          "external_api_ms_mean": null,
+          "data_quality": {
+            "contour_count": 5,
+            "coordinate_count": 25,
+            "elevation_min_m": 267.0,
+            "elevation_max_m": 271.00000000000006,
+            "elevation_range_m": 4.000000000000057,
+            "elevation_mean_m": 269.0,
+            "dem_rows": 112,
+            "dem_columns": 105,
+            "dem_cells": 11760,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 30.632720112392064,
+            "slope_mean_degrees": 1.868657658198372,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 1.0,
+            "hydrology_valid_cells": 11760,
+            "valid_flow_direction_percentage": 99.35374149659863,
+            "sink_cells": 0,
+            "edge_outflow_cells": 430,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 2898.0,
+            "flow_accumulation_mean_cells": 60.537244897959184,
+            "flow_accumulation_median_cells": 15.0,
+            "catchment_area_m2": 72450.0,
+            "catchment_area_hectares": 7.245,
+            "catchment_area_km2": 0.07245,
+            "catchment_cell_count": 2898,
+            "candidate_count": 4,
+            "rejected_candidate_count": 3,
+            "recommendation_count": 4,
+            "candidates": {
+              "summary": {
+                "seed_count": 11,
+                "accepted_count": 11,
+                "deduplicated_count": 8,
+                "final_count": 8,
+                "rejected_count": 3,
+                "rejection_reasons": {
+                  "candidate_too_close": 3
+                },
+                "min_separation_m": 50.0,
+                "min_drainage_area_cells": 2.0,
+                "max_candidates": 25
+              },
+              "candidates": [
+                {
+                  "candidate_id": "cand-00102-00104",
+                  "candidate_rank": 1,
+                  "candidate_score": 1.0,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 1.0,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 102,
+                  "column": 104,
+                  "latitude": 21.262099073681846,
+                  "longitude": 81.30251137067931,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.795121900098097,
+                  "flow_accumulation_cells": 2898.0,
+                  "drainage_area_m2": 72450.0,
+                  "outlet_id": "outlet-102-104",
+                  "catchment_id": "catchment-10814",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 72,450 m2 across 2,898 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 1.00",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00009-00000",
+                  "candidate_rank": 2,
+                  "candidate_score": 0.998188,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.992754,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 9,
+                  "column": 0,
+                  "latitude": 21.257906604043015,
+                  "longitude": 81.29749077420344,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.80517056317108,
+                  "flow_accumulation_cells": 2877.0,
+                  "drainage_area_m2": 71925.0,
+                  "outlet_id": "outlet-9-0",
+                  "catchment_id": "catchment-945",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 71,925 m2 across 2,877 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.99",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00111-00009",
+                  "candidate_rank": 3,
+                  "candidate_score": 0.990769,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.963078,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 111,
+                  "column": 9,
+                  "latitude": 21.262513814826978,
+                  "longitude": 81.29793377503559,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.772054474506975,
+                  "flow_accumulation_cells": 2791.0,
+                  "drainage_area_m2": 69775.0,
+                  "outlet_id": "outlet-111-9",
+                  "catchment_id": "catchment-11664",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 69,775 m2 across 2,791 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.96",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00095",
+                  "candidate_rank": 4,
+                  "candidate_score": 0.990683,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.962733,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 95,
+                  "latitude": 21.257491876372907,
+                  "longitude": 81.30206822903968,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.796146636496778,
+                  "flow_accumulation_cells": 2790.0,
+                  "drainage_area_m2": 69750.0,
+                  "outlet_id": "outlet-0-95",
+                  "catchment_id": "catchment-95",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 69,750 m2 across 2,790 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.96",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00009",
+                  "candidate_rank": 5,
+                  "candidate_score": 0.401812,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.007246,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 9,
+                  "latitude": 21.25749925176752,
+                  "longitude": 81.29792368876001,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.833197014915007,
+                  "flow_accumulation_cells": 21.0,
+                  "drainage_area_m2": 525.0,
+                  "outlet_id": "outlet-0-9",
+                  "catchment_id": "catchment-9",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 525 m2 across 21 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00111-00095",
+                  "candidate_rank": 6,
+                  "candidate_score": 0.361812,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.007246,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 111,
+                  "column": 95,
+                  "latitude": 21.262506437527772,
+                  "longitude": 81.30207845562447,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.8040957534654085,
+                  "flow_accumulation_cells": 21.0,
+                  "drainage_area_m2": 525.0,
+                  "outlet_id": "outlet-111-95",
+                  "catchment_id": "catchment-11750",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 525 m2 across 21 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00009-00104",
+                  "candidate_rank": 7,
+                  "candidate_score": 0.361639,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.006556,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 9,
+                  "column": 104,
+                  "latitude": 21.257897684774413,
+                  "longitude": 81.30250279015722,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.838606548901488,
+                  "flow_accumulation_cells": 19.0,
+                  "drainage_area_m2": 475.0,
+                  "outlet_id": "outlet-9-104",
+                  "catchment_id": "catchment-1049",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 475 m2 across 19 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00102-00000",
+                  "candidate_rank": 8,
+                  "candidate_score": 0.361639,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.006556,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 102,
+                  "column": 0,
+                  "latitude": 21.26210799488017,
+                  "longitude": 81.29749921256435,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.8500104036218845,
+                  "flow_accumulation_cells": 19.0,
+                  "drainage_area_m2": 475.0,
+                  "outlet_id": "outlet-102-0",
+                  "catchment_id": "catchment-10710",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 475 m2 across 19 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.9 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                }
+              ],
+              "rejections": [
+                {
+                  "candidate_id": "cand-00004-00000",
+                  "row": 4,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00009-00000"
+                },
+                {
+                  "candidate_id": "cand-00109-00104",
+                  "row": 109,
+                  "column": 104,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00111-00095"
+                },
+                {
+                  "candidate_id": "cand-00000-00001",
+                  "row": 0,
+                  "column": 1,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00009-00000"
+                }
+              ]
+            },
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9817176870748299,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 981,
+              "resolved_sink_count": 981,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 0.0014999999996234692,
+              "modified_cell_count": 1045,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                102,
+                104
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 102,
+                  "col": 104,
+                  "kind": "boundary",
+                  "accumulation_cells": 2898.0,
+                  "selected": true
+                },
+                {
+                  "row": 9,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 2877.0,
+                  "selected": false
+                },
+                {
+                  "row": 111,
+                  "col": 9,
+                  "kind": "boundary",
+                  "accumulation_cells": 2791.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 95,
+                  "kind": "boundary",
+                  "accumulation_cells": 2790.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 9,
+                  "kind": "boundary",
+                  "accumulation_cells": 21.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "fixture": "sample",
+      "filename": "sample_contours.kml",
+      "input_bytes": 6710528,
+      "levels": [
+        {
+          "concurrency": 1,
+          "requests": 5,
+          "total_seconds": 41.7586,
+          "throughput_rps": 0.12,
+          "success_count": 5,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 5
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 8351.6,
+            "p50": 8397.545,
+            "p95": 8415.178,
+            "p99": 8415.178,
+            "max": 8415.178
+          },
+          "cpu_seconds": 41.403,
+          "cpu_user_seconds": 40.7358,
+          "cpu_sys_seconds": 0.6671,
+          "cpu_utilization_percent": 99.15,
+          "peak_rss_kb": 503984.0,
+          "tracemalloc_peak_kb": 85564.68,
+          "stages_ms_mean": {
+            "DEM": 1166.683,
+            "DEM_validation": 375.938,
+            "candidates_deduplication": 5.024,
+            "candidates_filtering": 0.863,
+            "candidates_generation": 33.873,
+            "candidates_ranking": 6.547,
+            "catchment": 156.145,
+            "diagnostics": 123.039,
+            "hydrology": 4944.219,
+            "parsing": 1404.8,
+            "recommendation": 0.83,
+            "request": 8350.657,
+            "suitability": 0.82,
+            "upload_validation": 3.807
+          },
+          "external_api_ms_mean": null,
+          "data_quality": {
+            "contour_count": 1355,
+            "coordinate_count": 159113,
+            "elevation_min_m": 266.99999999999994,
+            "elevation_max_m": 298.0,
+            "elevation_range_m": 31.000000000000057,
+            "elevation_mean_m": 284.27749077490773,
+            "dem_rows": 527,
+            "dem_columns": 650,
+            "dem_cells": 342550,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 34.83939816414188,
+            "slope_mean_degrees": 3.3992322385125706,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 0.9997134112234701,
+            "hydrology_valid_cells": 342550,
+            "valid_flow_direction_percentage": 99.49175302875493,
+            "sink_cells": 0,
+            "edge_outflow_cells": 2350,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 157912.0,
+            "flow_accumulation_mean_cells": 233.99777842650707,
+            "flow_accumulation_median_cells": 6.0,
+            "catchment_area_m2": 574050.0,
+            "catchment_area_hectares": 57.405,
+            "catchment_area_km2": 0.57405,
+            "catchment_cell_count": 22962,
+            "candidate_count": 4,
+            "rejected_candidate_count": 491,
+            "recommendation_count": 4,
+            "candidates": {
+              "summary": {
+                "seed_count": 516,
+                "accepted_count": 476,
+                "deduplicated_count": 148,
+                "final_count": 25,
+                "rejected_count": 491,
+                "rejection_reasons": {
+                  "candidate_limit_exceeded": 123,
+                  "candidate_too_close": 328,
+                  "insufficient_drainage_area": 40
+                },
+                "min_separation_m": 50.0,
+                "min_drainage_area_cells": 2.0,
+                "max_candidates": 25
+              },
+              "candidates": [
+                {
+                  "candidate_id": "cand-00526-00072",
+                  "candidate_rank": 1,
+                  "candidate_score": 0.770223,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.14541,
+                    "slope": 1.0,
+                    "elevation": 0.83871,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 526,
+                  "column": 72,
+                  "latitude": 21.263620091341256,
+                  "longitude": 81.28487462313637,
+                  "elevation_m": 272.0,
+                  "slope_degrees": 5.710593137499643,
+                  "flow_accumulation_cells": 22962.0,
+                  "drainage_area_m2": 574050.0,
+                  "outlet_id": "outlet-526-72",
+                  "catchment_id": "catchment-341972",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 574,050 m2 across 22,962 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.15",
+                    "Slope 5.7 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 272.0 m (elevation score 0.84)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00023-00000",
+                  "candidate_rank": 2,
+                  "candidate_score": 0.739365,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.086491,
+                    "slope": 1.0,
+                    "elevation": 0.677419,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 23,
+                  "column": 0,
+                  "latitude": 21.240902215924574,
+                  "longitude": 81.2813614759734,
+                  "elevation_m": 277.0,
+                  "slope_degrees": 5.710593137499643,
+                  "flow_accumulation_cells": 13658.0,
+                  "drainage_area_m2": 341450.0,
+                  "outlet_id": "outlet-23-0",
+                  "catchment_id": "catchment-14950",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 341,450 m2 across 13,658 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.09",
+                    "Slope 5.7 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 277.0 m (elevation score 0.68)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00262-00649",
+                  "candidate_rank": 3,
+                  "candidate_score": 0.677293,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.049819,
+                    "slope": 1.0,
+                    "elevation": 0.548387,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 262,
+                  "column": 649,
+                  "latitude": 21.251644279607522,
+                  "longitude": 81.31265757214858,
+                  "elevation_m": 281.0,
+                  "slope_degrees": 5.710593137499643,
+                  "flow_accumulation_cells": 7867.0,
+                  "drainage_area_m2": 196675.0,
+                  "outlet_id": "outlet-262-649",
+                  "catchment_id": "catchment-170949",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 196,675 m2 across 7,867 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.05",
+                    "Slope 5.7 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 281.0 m (elevation score 0.55)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00526-00216",
+                  "candidate_rank": 4,
+                  "candidate_score": 0.669477,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.005649,
+                    "slope": 1.0,
+                    "elevation": 0.580645,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 526,
+                  "column": 216,
+                  "latitude": 21.26360821822344,
+                  "longitude": 81.29181461244723,
+                  "elevation_m": 280.0,
+                  "slope_degrees": 5.710593137499643,
+                  "flow_accumulation_cells": 892.0,
+                  "drainage_area_m2": 22300.0,
+                  "outlet_id": "outlet-526-216",
+                  "catchment_id": "catchment-342116",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 22,300 m2 across 892 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.7 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 280.0 m (elevation score 0.58)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00393-00649",
+                  "candidate_rank": 5,
+                  "candidate_score": 0.647962,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.009911,
+                    "slope": 1.0,
+                    "elevation": 0.354839,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 393,
+                  "column": 649,
+                  "latitude": 21.25756236318189,
+                  "longitude": 81.31267006101648,
+                  "elevation_m": 287.0,
+                  "slope_degrees": 5.710593137499643,
+                  "flow_accumulation_cells": 1565.0,
+                  "drainage_area_m2": 39125.0,
+                  "outlet_id": "outlet-393-649",
+                  "catchment_id": "catchment-256099",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 39,125 m2 across 1,565 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.7 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 287.0 m (elevation score 0.35)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00135-00649",
+                  "candidate_rank": 6,
+                  "candidate_score": 0.647172,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.006751,
+                    "slope": 1.0,
+                    "elevation": 0.354839,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 135,
+                  "column": 649,
+                  "latitude": 21.245906896905783,
+                  "longitude": 81.31264546873831,
+                  "elevation_m": 287.0,
+                  "slope_degrees": 5.710593137499643,
+                  "flow_accumulation_cells": 1066.0,
+                  "drainage_area_m2": 26650.0,
+                  "outlet_id": "outlet-135-649",
+                  "catchment_id": "catchment-88399",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 26,650 m2 across 1,066 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.7 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 287.0 m (elevation score 0.35)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00526-00040",
+                  "candidate_rank": 7,
+                  "candidate_score": 0.630653,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.013792,
+                    "slope": 0.602154,
+                    "elevation": 0.967742,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 526,
+                  "column": 40,
+                  "latitude": 21.263622691005203,
+                  "longitude": 81.28333240264031,
+                  "elevation_m": 268.0,
+                  "slope_degrees": 11.942315208773197,
+                  "flow_accumulation_cells": 2178.0,
+                  "drainage_area_m2": 54450.0,
+                  "outlet_id": "outlet-526-40",
+                  "catchment_id": "catchment-341940",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 54,450 m2 across 2,178 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 11.9 degrees - gentle slope within the preferred embankment range (slope score 0.60)",
+                    "Site elevation 268.0 m (elevation score 0.97)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00227",
+                  "candidate_rank": 8,
+                  "candidate_score": 0.617006,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.005902,
+                    "slope": 0.73733,
+                    "elevation": 0.580645,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 0,
+                  "column": 227,
+                  "latitude": 21.239844559912324,
+                  "longitude": 81.29229787371737,
+                  "elevation_m": 280.0,
+                  "slope_degrees": 10.226951671920947,
+                  "flow_accumulation_cells": 932.0,
+                  "drainage_area_m2": 23300.0,
+                  "outlet_id": "outlet-0-227",
+                  "catchment_id": "catchment-227",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 23,300 m2 across 932 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 10.2 degrees - gentle slope within the preferred embankment range (slope score 0.74)",
+                    "Site elevation 280.0 m (elevation score 0.58)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00526-00254",
+                  "candidate_rank": 9,
+                  "candidate_score": 0.56789,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.252204,
+                    "slope": 0.0,
+                    "elevation": 0.548387,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 526,
+                  "column": 254,
+                  "latitude": 21.26360503738569,
+                  "longitude": 81.2936459977086,
+                  "elevation_m": 281.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 39826.0,
+                  "drainage_area_m2": 995650.0,
+                  "outlet_id": "outlet-526-254",
+                  "catchment_id": "catchment-342154",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 995,650 m2 across 39,826 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.25",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 281.0 m (elevation score 0.55)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00437-00649",
+                  "candidate_rank": 10,
+                  "candidate_score": 0.531571,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.158544,
+                    "slope": 0.0,
+                    "elevation": 0.419355,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 437,
+                  "column": 649,
+                  "latitude": 21.259550115510557,
+                  "longitude": 81.31267425671862,
+                  "elevation_m": 285.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 25036.0,
+                  "drainage_area_m2": 625900.0,
+                  "outlet_id": "outlet-437-649",
+                  "catchment_id": "catchment-284699",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 625,900 m2 across 25,036 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.16",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 285.0 m (elevation score 0.42)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00337-00000",
+                  "candidate_rank": 11,
+                  "candidate_score": 0.483582,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.049167,
+                    "slope": 0.0,
+                    "elevation": 0.612903,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 337,
+                  "column": 0,
+                  "latitude": 21.255087597490327,
+                  "longitude": 81.2813884062897,
+                  "elevation_m": 279.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 7764.0,
+                  "drainage_area_m2": 194100.0,
+                  "outlet_id": "outlet-337-0",
+                  "catchment_id": "catchment-219050",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 194,100 m2 across 7,764 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.05",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 279.0 m (elevation score 0.61)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00334",
+                  "candidate_rank": 12,
+                  "candidate_score": 0.476891,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.074016,
+                    "slope": 0.0,
+                    "elevation": 0.483871,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 0,
+                  "column": 334,
+                  "latitude": 21.23983554728906,
+                  "longitude": 81.29745384105945,
+                  "elevation_m": 283.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 11688.0,
+                  "drainage_area_m2": 292200.0,
+                  "outlet_id": "outlet-0-334",
+                  "catchment_id": "catchment-334",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 292,200 m2 across 11,688 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.07",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 283.0 m (elevation score 0.48)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00278-00000",
+                  "candidate_rank": 13,
+                  "candidate_score": 0.469518,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.005813,
+                    "slope": 0.0,
+                    "elevation": 0.580645,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 278,
+                  "column": 0,
+                  "latitude": 21.2524221932218,
+                  "longitude": 81.28138334443307,
+                  "elevation_m": 280.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 918.0,
+                  "drainage_area_m2": 22950.0,
+                  "outlet_id": "outlet-278-0",
+                  "catchment_id": "catchment-180700",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 22,950 m2 across 918 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 280.0 m (elevation score 0.58)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00526-00178",
+                  "candidate_rank": 14,
+                  "candidate_score": 0.469377,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.00525,
+                    "slope": 0.0,
+                    "elevation": 0.580645,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 526,
+                  "column": 178,
+                  "latitude": 21.26361137916177,
+                  "longitude": 81.28998322684699,
+                  "elevation_m": 280.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 829.0,
+                  "drainage_area_m2": 20725.0,
+                  "outlet_id": "outlet-526-178",
+                  "catchment_id": "catchment-342078",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 20,725 m2 across 829 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 280.0 m (elevation score 0.58)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00526-00368",
+                  "candidate_rank": 15,
+                  "candidate_score": 0.460306,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.007675,
+                    "slope": 0.0,
+                    "elevation": 0.483871,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 526,
+                  "column": 368,
+                  "latitude": 21.26359537547618,
+                  "longitude": 81.29914015143822,
+                  "elevation_m": 283.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 1212.0,
+                  "drainage_area_m2": 30300.0,
+                  "outlet_id": "outlet-526-368",
+                  "catchment_id": "catchment-342268",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 30,300 m2 across 1,212 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 283.0 m (elevation score 0.48)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00557",
+                  "candidate_rank": 16,
+                  "candidate_score": 0.46028,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.059185,
+                    "slope": 0.0,
+                    "elevation": 0.354839,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 0,
+                  "column": 557,
+                  "latitude": 21.239816257530524,
+                  "longitude": 81.30819944638782,
+                  "elevation_m": 287.0,
+                  "slope_degrees": 6.513775987637283e-13,
+                  "flow_accumulation_cells": 9346.0,
+                  "drainage_area_m2": 233650.0,
+                  "outlet_id": "outlet-0-557",
+                  "catchment_id": "catchment-557",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 233,650 m2 across 9,346 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.06",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 287.0 m (elevation score 0.35)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00526-00492",
+                  "candidate_rank": 17,
+                  "candidate_score": 0.459947,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.019144,
+                    "slope": 0.0,
+                    "elevation": 0.451613,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 526,
+                  "column": 492,
+                  "latitude": 21.26358466268261,
+                  "longitude": 81.30511624492574,
+                  "elevation_m": 284.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 3023.0,
+                  "drainage_area_m2": 75575.0,
+                  "outlet_id": "outlet-526-492",
+                  "catchment_id": "catchment-342392",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 75,575 m2 across 3,023 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.02",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 284.0 m (elevation score 0.45)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00348",
+                  "candidate_rank": 18,
+                  "candidate_score": 0.459711,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.005294,
+                    "slope": 0.0,
+                    "elevation": 0.483871,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 0,
+                  "column": 348,
+                  "latitude": 21.239834356409332,
+                  "longitude": 81.29812845340741,
+                  "elevation_m": 283.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 836.0,
+                  "drainage_area_m2": 20900.0,
+                  "outlet_id": "outlet-0-348",
+                  "catchment_id": "catchment-348",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 20,900 m2 across 836 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 283.0 m (elevation score 0.48)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00054-00649",
+                  "candidate_rank": 19,
+                  "candidate_score": 0.454592,
+                  "score_components": {
+                    "catchment_area": 0.48,
+                    "flow_accumulation": 0.003141,
+                    "slope": 1.0,
+                    "elevation": 0.258065,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 54,
+                  "column": 649,
+                  "latitude": 21.242247619283752,
+                  "longitude": 81.31263775135758,
+                  "elevation_m": 290.0,
+                  "slope_degrees": 5.710593137499643,
+                  "flow_accumulation_cells": 496.0,
+                  "drainage_area_m2": 12400.0,
+                  "outlet_id": "outlet-54-649",
+                  "catchment_id": "catchment-35749",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 12,400 m2 across 496 upstream cells (area score 0.48)",
+                    "Flow accumulation relative peak score 0.00",
+                    "Slope 5.7 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 290.0 m (elevation score 0.26)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00107-00649",
+                  "candidate_rank": 20,
+                  "candidate_score": 0.452453,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.027876,
+                    "slope": 0.0,
+                    "elevation": 0.354839,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 107,
+                  "column": 649,
+                  "latitude": 21.24464196161123,
+                  "longitude": 81.3126428008153,
+                  "elevation_m": 287.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 4402.0,
+                  "drainage_area_m2": 110050.0,
+                  "outlet_id": "outlet-107-649",
+                  "catchment_id": "catchment-70199",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 110,050 m2 across 4,402 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.03",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 287.0 m (elevation score 0.35)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00400",
+                  "candidate_rank": 21,
+                  "candidate_score": 0.449994,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.005136,
+                    "slope": 0.0,
+                    "elevation": 0.387097,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 0,
+                  "column": 400,
+                  "latitude": 21.239829909522975,
+                  "longitude": 81.30063415600206,
+                  "elevation_m": 286.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 811.0,
+                  "drainage_area_m2": 20275.0,
+                  "outlet_id": "outlet-0-400",
+                  "catchment_id": "catchment-400",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 20,275 m2 across 811 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 286.0 m (elevation score 0.39)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00458",
+                  "candidate_rank": 22,
+                  "candidate_score": 0.449949,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.004958,
+                    "slope": 0.0,
+                    "elevation": 0.387097,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 0,
+                  "column": 458,
+                  "latitude": 21.239824905627692,
+                  "longitude": 81.30342897735582,
+                  "elevation_m": 286.0,
+                  "slope_degrees": 6.513775987637283e-13,
+                  "flow_accumulation_cells": 783.0,
+                  "drainage_area_m2": 19575.0,
+                  "outlet_id": "outlet-0-458",
+                  "catchment_id": "catchment-458",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 19,575 m2 across 783 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.00",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 286.0 m (elevation score 0.39)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00315-00649",
+                  "candidate_rank": 23,
+                  "candidate_score": 0.447748,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.009056,
+                    "slope": 0.0,
+                    "elevation": 0.354839,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 315,
+                  "column": 649,
+                  "latitude": 21.254038619264417,
+                  "longitude": 81.31266262437705,
+                  "elevation_m": 287.0,
+                  "slope_degrees": 0.0,
+                  "flow_accumulation_cells": 1430.0,
+                  "drainage_area_m2": 35750.0,
+                  "outlet_id": "outlet-315-649",
+                  "catchment_id": "catchment-205399",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 35,750 m2 across 1,430 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 0.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 287.0 m (elevation score 0.35)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00113",
+                  "candidate_rank": 24,
+                  "candidate_score": 0.437097,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 1.0,
+                    "slope": 0.0,
+                    "elevation": 0.870968,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 113,
+                  "latitude": 21.23985398876269,
+                  "longitude": 81.2868045971423,
+                  "elevation_m": 271.0,
+                  "slope_degrees": 19.983666222142322,
+                  "flow_accumulation_cells": 157912.0,
+                  "drainage_area_m2": 3947800.0,
+                  "outlet_id": "outlet-0-113",
+                  "catchment_id": "catchment-113",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 3,947,800 m2 across 157,912 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 1.00",
+                    "Slope 20.0 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 271.0 m (elevation score 0.87)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00526-00083",
+                  "candidate_rank": 25,
+                  "candidate_score": 0.337435,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 6.3e-05,
+                    "slope": 1.0,
+                    "elevation": 0.774194,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 526,
+                  "column": 83,
+                  "latitude": 21.263619194447617,
+                  "longitude": 81.28540476137779,
+                  "elevation_m": 274.0,
+                  "slope_degrees": 5.710593137499643,
+                  "flow_accumulation_cells": 10.0,
+                  "drainage_area_m2": 250.0,
+                  "outlet_id": "outlet-526-83",
+                  "catchment_id": "catchment-341983",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 250 m2 across 10 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.00",
+                    "Slope 5.7 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 274.0 m (elevation score 0.77)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                }
+              ],
+              "rejections": [
+                {
+                  "candidate_id": "cand-00000-00002",
+                  "row": 0,
+                  "column": 2,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00000-00023",
+                  "row": 0,
+                  "column": 23,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00000-00084",
+                  "row": 0,
+                  "column": 84,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00000-00299",
+                  "row": 0,
+                  "column": 299,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00000-00576",
+                  "row": 0,
+                  "column": 576,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00000-00586",
+                  "row": 0,
+                  "column": 586,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00000-00594",
+                  "row": 0,
+                  "column": 594,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00376-00649",
+                  "row": 376,
+                  "column": 649,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00400-00649",
+                  "row": 400,
+                  "column": 649,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00407-00649",
+                  "row": 407,
+                  "column": 649,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00416-00649",
+                  "row": 416,
+                  "column": 649,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00422-00649",
+                  "row": 422,
+                  "column": 649,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00447-00000",
+                  "row": 447,
+                  "column": 0,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00454-00000",
+                  "row": 454,
+                  "column": 0,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00477-00000",
+                  "row": 477,
+                  "column": 0,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00500-00000",
+                  "row": 500,
+                  "column": 0,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00524-00000",
+                  "row": 524,
+                  "column": 0,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00062",
+                  "row": 526,
+                  "column": 62,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00066",
+                  "row": 526,
+                  "column": 66,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00074",
+                  "row": 526,
+                  "column": 74,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00081",
+                  "row": 526,
+                  "column": 81,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00085",
+                  "row": 526,
+                  "column": 85,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00089",
+                  "row": 526,
+                  "column": 89,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00093",
+                  "row": 526,
+                  "column": 93,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00101",
+                  "row": 526,
+                  "column": 101,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00111",
+                  "row": 526,
+                  "column": 111,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00117",
+                  "row": 526,
+                  "column": 117,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00123",
+                  "row": 526,
+                  "column": 123,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00130",
+                  "row": 526,
+                  "column": 130,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00150",
+                  "row": 526,
+                  "column": 150,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00184",
+                  "row": 526,
+                  "column": 184,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00192",
+                  "row": 526,
+                  "column": 192,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00204",
+                  "row": 526,
+                  "column": 204,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00211",
+                  "row": 526,
+                  "column": 211,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00218",
+                  "row": 526,
+                  "column": 218,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00223",
+                  "row": 526,
+                  "column": 223,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00235",
+                  "row": 526,
+                  "column": 235,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00276",
+                  "row": 526,
+                  "column": 276,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00284",
+                  "row": 526,
+                  "column": 284,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00526-00289",
+                  "row": 526,
+                  "column": 289,
+                  "rejection_reason": "insufficient_drainage_area",
+                  "duplicate_of": null
+                },
+                {
+                  "candidate_id": "cand-00273-00000",
+                  "row": 273,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00278-00000"
+                },
+                {
+                  "candidate_id": "cand-00526-00251",
+                  "row": 526,
+                  "column": 251,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00254"
+                },
+                {
+                  "candidate_id": "cand-00100-00649",
+                  "row": 100,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00107-00649"
+                },
+                {
+                  "candidate_id": "cand-00321-00649",
+                  "row": 321,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00315-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00415",
+                  "row": 526,
+                  "column": 415,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00411"
+                },
+                {
+                  "candidate_id": "cand-00102-00649",
+                  "row": 102,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00107-00649"
+                },
+                {
+                  "candidate_id": "cand-00000-00507",
+                  "row": 0,
+                  "column": 507,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00511"
+                },
+                {
+                  "candidate_id": "cand-00526-00464",
+                  "row": 526,
+                  "column": 464,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00462"
+                },
+                {
+                  "candidate_id": "cand-00072-00000",
+                  "row": 72,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00069-00000"
+                },
+                {
+                  "candidate_id": "cand-00526-00182",
+                  "row": 526,
+                  "column": 182,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00178"
+                },
+                {
+                  "candidate_id": "cand-00228-00000",
+                  "row": 228,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00221-00000"
+                },
+                {
+                  "candidate_id": "cand-00052-00649",
+                  "row": 52,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00054-00649"
+                },
+                {
+                  "candidate_id": "cand-00015-00000",
+                  "row": 15,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00023-00000"
+                },
+                {
+                  "candidate_id": "cand-00196-00000",
+                  "row": 196,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00189-00000"
+                },
+                {
+                  "candidate_id": "cand-00526-00494",
+                  "row": 526,
+                  "column": 494,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00492"
+                },
+                {
+                  "candidate_id": "cand-00187-00000",
+                  "row": 187,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00189-00000"
+                },
+                {
+                  "candidate_id": "cand-00193-00649",
+                  "row": 193,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00197-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00371",
+                  "row": 526,
+                  "column": 371,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00368"
+                },
+                {
+                  "candidate_id": "cand-00218-00000",
+                  "row": 218,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00221-00000"
+                },
+                {
+                  "candidate_id": "cand-00396-00000",
+                  "row": 396,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00394-00000"
+                },
+                {
+                  "candidate_id": "cand-00526-00616",
+                  "row": 526,
+                  "column": 616,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00618"
+                },
+                {
+                  "candidate_id": "cand-00526-00487",
+                  "row": 526,
+                  "column": 487,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00492"
+                },
+                {
+                  "candidate_id": "cand-00000-00376",
+                  "row": 0,
+                  "column": 376,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00378"
+                },
+                {
+                  "candidate_id": "cand-00177-00649",
+                  "row": 177,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00171-00649"
+                },
+                {
+                  "candidate_id": "cand-00404-00000",
+                  "row": 404,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00411-00000"
+                },
+                {
+                  "candidate_id": "cand-00431-00649",
+                  "row": 431,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00427-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00046",
+                  "row": 526,
+                  "column": 46,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00040"
+                },
+                {
+                  "candidate_id": "cand-00526-00413",
+                  "row": 526,
+                  "column": 413,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00411"
+                },
+                {
+                  "candidate_id": "cand-00000-00454",
+                  "row": 0,
+                  "column": 454,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00458"
+                },
+                {
+                  "candidate_id": "cand-00000-00268",
+                  "row": 0,
+                  "column": 268,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00266"
+                },
+                {
+                  "candidate_id": "cand-00195-00649",
+                  "row": 195,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00197-00649"
+                },
+                {
+                  "candidate_id": "cand-00000-00165",
+                  "row": 0,
+                  "column": 165,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00162"
+                },
+                {
+                  "candidate_id": "cand-00310-00649",
+                  "row": 310,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00304-00649"
+                },
+                {
+                  "candidate_id": "cand-00373-00000",
+                  "row": 373,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00369-00000"
+                },
+                {
+                  "candidate_id": "cand-00526-00490",
+                  "row": 526,
+                  "column": 490,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00492"
+                },
+                {
+                  "candidate_id": "cand-00271-00000",
+                  "row": 271,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00278-00000"
+                },
+                {
+                  "candidate_id": "cand-00167-00649",
+                  "row": 167,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00171-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00409",
+                  "row": 526,
+                  "column": 409,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00411"
+                },
+                {
+                  "candidate_id": "cand-00466-00000",
+                  "row": 466,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00468-00000"
+                },
+                {
+                  "candidate_id": "cand-00243-00649",
+                  "row": 243,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00238-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00623",
+                  "row": 526,
+                  "column": 623,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00618"
+                },
+                {
+                  "candidate_id": "cand-00473-00000",
+                  "row": 473,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00468-00000"
+                },
+                {
+                  "candidate_id": "cand-00000-00169",
+                  "row": 0,
+                  "column": 169,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00162"
+                },
+                {
+                  "candidate_id": "cand-00000-00469",
+                  "row": 0,
+                  "column": 469,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00472"
+                },
+                {
+                  "candidate_id": "cand-00000-00517",
+                  "row": 0,
+                  "column": 517,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00511"
+                },
+                {
+                  "candidate_id": "cand-00190-00649",
+                  "row": 190,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00197-00649"
+                },
+                {
+                  "candidate_id": "cand-00386-00649",
+                  "row": 386,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00393-00649"
+                },
+                {
+                  "candidate_id": "cand-00000-00260",
+                  "row": 0,
+                  "column": 260,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00266"
+                },
+                {
+                  "candidate_id": "cand-00000-00560",
+                  "row": 0,
+                  "column": 560,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00557"
+                },
+                {
+                  "candidate_id": "cand-00051-00000",
+                  "row": 51,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00059-00000"
+                },
+                {
+                  "candidate_id": "cand-00129-00649",
+                  "row": 129,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00135-00649"
+                },
+                {
+                  "candidate_id": "cand-00000-00318",
+                  "row": 0,
+                  "column": 318,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00310"
+                },
+                {
+                  "candidate_id": "cand-00000-00514",
+                  "row": 0,
+                  "column": 514,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00511"
+                },
+                {
+                  "candidate_id": "cand-00526-00364",
+                  "row": 526,
+                  "column": 364,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00368"
+                },
+                {
+                  "candidate_id": "cand-00526-00592",
+                  "row": 526,
+                  "column": 592,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00595"
+                },
+                {
+                  "candidate_id": "cand-00418-00649",
+                  "row": 418,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00427-00649"
+                },
+                {
+                  "candidate_id": "cand-00390-00000",
+                  "row": 390,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00394-00000"
+                },
+                {
+                  "candidate_id": "cand-00241-00649",
+                  "row": 241,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00238-00649"
+                },
+                {
+                  "candidate_id": "cand-00175-00649",
+                  "row": 175,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00171-00649"
+                },
+                {
+                  "candidate_id": "cand-00000-00307",
+                  "row": 0,
+                  "column": 307,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00310"
+                },
+                {
+                  "candidate_id": "cand-00047-00649",
+                  "row": 47,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00054-00649"
+                },
+                {
+                  "candidate_id": "cand-00516-00649",
+                  "row": 516,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00512-00649"
+                },
+                {
+                  "candidate_id": "cand-00407-00000",
+                  "row": 407,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00411-00000"
+                },
+                {
+                  "candidate_id": "cand-00000-00205",
+                  "row": 0,
+                  "column": 205,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00197"
+                },
+                {
+                  "candidate_id": "cand-00000-00336",
+                  "row": 0,
+                  "column": 336,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00334"
+                },
+                {
+                  "candidate_id": "cand-00030-00000",
+                  "row": 30,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00023-00000"
+                },
+                {
+                  "candidate_id": "cand-00199-00649",
+                  "row": 199,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00197-00649"
+                },
+                {
+                  "candidate_id": "cand-00177-00000",
+                  "row": 177,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00171-00000"
+                },
+                {
+                  "candidate_id": "cand-00296-00649",
+                  "row": 296,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00291-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00349",
+                  "row": 526,
+                  "column": 349,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00346"
+                },
+                {
+                  "candidate_id": "cand-00526-00621",
+                  "row": 526,
+                  "column": 621,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00618"
+                },
+                {
+                  "candidate_id": "cand-00000-00200",
+                  "row": 0,
+                  "column": 200,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00197"
+                },
+                {
+                  "candidate_id": "cand-00000-00342",
+                  "row": 0,
+                  "column": 342,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00334"
+                },
+                {
+                  "candidate_id": "cand-00526-00586",
+                  "row": 526,
+                  "column": 586,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00595"
+                },
+                {
+                  "candidate_id": "cand-00000-00396",
+                  "row": 0,
+                  "column": 396,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00400"
+                },
+                {
+                  "candidate_id": "cand-00017-00000",
+                  "row": 17,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00023-00000"
+                },
+                {
+                  "candidate_id": "cand-00000-00060",
+                  "row": 0,
+                  "column": 60,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00052"
+                },
+                {
+                  "candidate_id": "cand-00000-00193",
+                  "row": 0,
+                  "column": 193,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00197"
+                },
+                {
+                  "candidate_id": "cand-00000-00263",
+                  "row": 0,
+                  "column": 263,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00266"
+                },
+                {
+                  "candidate_id": "cand-00000-00202",
+                  "row": 0,
+                  "column": 202,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00197"
+                },
+                {
+                  "candidate_id": "cand-00000-00632",
+                  "row": 0,
+                  "column": 632,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00634"
+                },
+                {
+                  "candidate_id": "cand-00510-00649",
+                  "row": 510,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00512-00649"
+                },
+                {
+                  "candidate_id": "cand-00000-00554",
+                  "row": 0,
+                  "column": 554,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00557"
+                },
+                {
+                  "candidate_id": "cand-00254-00000",
+                  "row": 254,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00263-00000"
+                },
+                {
+                  "candidate_id": "cand-00300-00649",
+                  "row": 300,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00291-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00268",
+                  "row": 526,
+                  "column": 268,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00274"
+                },
+                {
+                  "candidate_id": "cand-00526-00390",
+                  "row": 526,
+                  "column": 390,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00399"
+                },
+                {
+                  "candidate_id": "cand-00526-00467",
+                  "row": 526,
+                  "column": 467,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00462"
+                },
+                {
+                  "candidate_id": "cand-00025-00649",
+                  "row": 25,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00032-00649"
+                },
+                {
+                  "candidate_id": "cand-00087-00000",
+                  "row": 87,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00092-00000"
+                },
+                {
+                  "candidate_id": "cand-00163-00649",
+                  "row": 163,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00171-00649"
+                },
+                {
+                  "candidate_id": "cand-00264-00649",
+                  "row": 264,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00262-00649"
+                },
+                {
+                  "candidate_id": "cand-00307-00649",
+                  "row": 307,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00304-00649"
+                },
+                {
+                  "candidate_id": "cand-00439-00649",
+                  "row": 439,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00437-00649"
+                },
+                {
+                  "candidate_id": "cand-00000-00344",
+                  "row": 0,
+                  "column": 344,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00348"
+                },
+                {
+                  "candidate_id": "cand-00000-00460",
+                  "row": 0,
+                  "column": 460,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00458"
+                },
+                {
+                  "candidate_id": "cand-00000-00637",
+                  "row": 0,
+                  "column": 637,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00634"
+                },
+                {
+                  "candidate_id": "cand-00035-00649",
+                  "row": 35,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00032-00649"
+                },
+                {
+                  "candidate_id": "cand-00192-00000",
+                  "row": 192,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00189-00000"
+                },
+                {
+                  "candidate_id": "cand-00526-00527",
+                  "row": 526,
+                  "column": 527,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00530"
+                },
+                {
+                  "candidate_id": "cand-00000-00405",
+                  "row": 0,
+                  "column": 405,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00400"
+                },
+                {
+                  "candidate_id": "cand-00223-00000",
+                  "row": 223,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00221-00000"
+                },
+                {
+                  "candidate_id": "cand-00267-00649",
+                  "row": 267,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00262-00649"
+                },
+                {
+                  "candidate_id": "cand-00367-00000",
+                  "row": 367,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00369-00000"
+                },
+                {
+                  "candidate_id": "cand-00000-00327",
+                  "row": 0,
+                  "column": 327,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00334"
+                },
+                {
+                  "candidate_id": "cand-00000-00339",
+                  "row": 0,
+                  "column": 339,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00334"
+                },
+                {
+                  "candidate_id": "cand-00002-00000",
+                  "row": 2,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00011-00000"
+                },
+                {
+                  "candidate_id": "cand-00433-00000",
+                  "row": 433,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00425-00000"
+                },
+                {
+                  "candidate_id": "cand-00470-00000",
+                  "row": 470,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00468-00000"
+                },
+                {
+                  "candidate_id": "cand-00526-00079",
+                  "row": 526,
+                  "column": 79,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00072"
+                },
+                {
+                  "candidate_id": "cand-00526-00087",
+                  "row": 526,
+                  "column": 87,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00083"
+                },
+                {
+                  "candidate_id": "cand-00157-00000",
+                  "row": 157,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00153-00000"
+                },
+                {
+                  "candidate_id": "cand-00183-00000",
+                  "row": 183,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00189-00000"
+                },
+                {
+                  "candidate_id": "cand-00203-00000",
+                  "row": 203,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00209-00000"
+                },
+                {
+                  "candidate_id": "cand-00280-00000",
+                  "row": 280,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00278-00000"
+                },
+                {
+                  "candidate_id": "cand-00332-00000",
+                  "row": 332,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00337-00000"
+                },
+                {
+                  "candidate_id": "cand-00341-00649",
+                  "row": 341,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00343-00649"
+                },
+                {
+                  "candidate_id": "cand-00373-00649",
+                  "row": 373,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00364-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00091",
+                  "row": 526,
+                  "column": 91,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00083"
+                },
+                {
+                  "candidate_id": "cand-00526-00227",
+                  "row": 526,
+                  "column": 227,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00230"
+                },
+                {
+                  "candidate_id": "cand-00526-00609",
+                  "row": 526,
+                  "column": 609,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00618"
+                },
+                {
+                  "candidate_id": "cand-00526-00640",
+                  "row": 526,
+                  "column": 640,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00636"
+                },
+                {
+                  "candidate_id": "cand-00000-00155",
+                  "row": 0,
+                  "column": 155,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00162"
+                },
+                {
+                  "candidate_id": "cand-00000-00216",
+                  "row": 0,
+                  "column": 216,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00209"
+                },
+                {
+                  "candidate_id": "cand-00000-00331",
+                  "row": 0,
+                  "column": 331,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00334"
+                },
+                {
+                  "candidate_id": "cand-00000-00465",
+                  "row": 0,
+                  "column": 465,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00458"
+                },
+                {
+                  "candidate_id": "cand-00000-00502",
+                  "row": 0,
+                  "column": 502,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00498"
+                },
+                {
+                  "candidate_id": "cand-00049-00649",
+                  "row": 49,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00054-00649"
+                },
+                {
+                  "candidate_id": "cand-00259-00649",
+                  "row": 259,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00262-00649"
+                },
+                {
+                  "candidate_id": "cand-00302-00649",
+                  "row": 302,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00304-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00265",
+                  "row": 526,
+                  "column": 265,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00274"
+                },
+                {
+                  "candidate_id": "cand-00000-00312",
+                  "row": 0,
+                  "column": 312,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00310"
+                },
+                {
+                  "candidate_id": "cand-00097-00649",
+                  "row": 97,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00091-00649"
+                },
+                {
+                  "candidate_id": "cand-00119-00000",
+                  "row": 119,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00110-00000"
+                },
+                {
+                  "candidate_id": "cand-00146-00000",
+                  "row": 146,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00153-00000"
+                },
+                {
+                  "candidate_id": "cand-00160-00649",
+                  "row": 160,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00155-00649"
+                },
+                {
+                  "candidate_id": "cand-00339-00000",
+                  "row": 339,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00337-00000"
+                },
+                {
+                  "candidate_id": "cand-00475-00000",
+                  "row": 475,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00468-00000"
+                },
+                {
+                  "candidate_id": "cand-00526-00115",
+                  "row": 526,
+                  "column": 115,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00108"
+                },
+                {
+                  "candidate_id": "cand-00526-00322",
+                  "row": 526,
+                  "column": 322,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00330"
+                },
+                {
+                  "candidate_id": "cand-00526-00342",
+                  "row": 526,
+                  "column": 342,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00346"
+                },
+                {
+                  "candidate_id": "cand-00526-00628",
+                  "row": 526,
+                  "column": 628,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00636"
+                },
+                {
+                  "candidate_id": "cand-00000-00462",
+                  "row": 0,
+                  "column": 462,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00458"
+                },
+                {
+                  "candidate_id": "cand-00107-00000",
+                  "row": 107,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00110-00000"
+                },
+                {
+                  "candidate_id": "cand-00126-00000",
+                  "row": 126,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00135-00000"
+                },
+                {
+                  "candidate_id": "cand-00131-00649",
+                  "row": 131,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00135-00649"
+                },
+                {
+                  "candidate_id": "cand-00143-00000",
+                  "row": 143,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00135-00000"
+                },
+                {
+                  "candidate_id": "cand-00164-00000",
+                  "row": 164,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00171-00000"
+                },
+                {
+                  "candidate_id": "cand-00169-00649",
+                  "row": 169,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00171-00649"
+                },
+                {
+                  "candidate_id": "cand-00371-00000",
+                  "row": 371,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00369-00000"
+                },
+                {
+                  "candidate_id": "cand-00386-00000",
+                  "row": 386,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00394-00000"
+                },
+                {
+                  "candidate_id": "cand-00411-00649",
+                  "row": 411,
+                  "column": 649,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00409-00649"
+                },
+                {
+                  "candidate_id": "cand-00526-00068",
+                  "row": 526,
+                  "column": 68,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00072"
+                },
+                {
+                  "candidate_id": "cand-00526-00128",
+                  "row": 526,
+                  "column": 128,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00121"
+                },
+                {
+                  "candidate_id": "cand-00526-00355",
+                  "row": 526,
+                  "column": 355,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00346"
+                },
+                {
+                  "candidate_id": "cand-00526-00403",
+                  "row": 526,
+                  "column": 403,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00399"
+                },
+                {
+                  "candidate_id": "cand-00526-00532",
+                  "row": 526,
+                  "column": 532,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00526-00530"
+                },
+                {
+                  "candidate_id": "cand-00000-00026",
+                  "row": 0,
+                  "column": 26,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00020"
+                },
+                {
+                  "candidate_id": "cand-00000-00030",
+                  "row": 0,
+                  "column": 30,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00037"
+                },
+                {
+                  "candidate_id": "cand-00000-00044",
+                  "row": 0,
+                  "column": 44,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00037"
+                }
+              ]
+            },
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9965698438184205,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 49422,
+              "resolved_sink_count": 49422,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 12.005199999998695,
+              "modified_cell_count": 131151,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                0,
+                113
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 0,
+                  "col": 113,
+                  "kind": "boundary",
+                  "accumulation_cells": 157912.0,
+                  "selected": true
+                },
+                {
+                  "row": 526,
+                  "col": 254,
+                  "kind": "boundary",
+                  "accumulation_cells": 39826.0,
+                  "selected": false
+                },
+                {
+                  "row": 437,
+                  "col": 649,
+                  "kind": "boundary",
+                  "accumulation_cells": 25036.0,
+                  "selected": false
+                },
+                {
+                  "row": 526,
+                  "col": 72,
+                  "kind": "boundary",
+                  "accumulation_cells": 22962.0,
+                  "selected": false
+                },
+                {
+                  "row": 23,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 13658.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

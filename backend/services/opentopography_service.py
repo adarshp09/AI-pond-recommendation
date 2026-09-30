@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import logging
 import os
+import time
 from typing import Any, Dict, Optional
 
 import httpx
 import numpy as np
 from dotenv import load_dotenv
+
+from config import settings
 
 load_dotenv()
 
@@ -14,6 +17,16 @@ logger = logging.getLogger(__name__)
 
 
 class OpenTopographyError(Exception):
+    pass
+
+
+class OpenTopographyRetryableError(OpenTopographyError):
+    """Retryable failure (network, timeout, 5xx)."""
+    pass
+
+
+class OpenTopographyPermanentError(OpenTopographyError):
+    """Non-retryable failure (4xx, invalid query)."""
     pass
 
 
@@ -25,11 +38,15 @@ class OpenTopographyService:
         self,
         api_key: Optional[str] = None,
         dataset: Optional[str] = None,
-        timeout: float = 30.0,
+        connect_timeout: float | None = None,
+        read_timeout: float | None = None,
+        max_retries: int | None = None,
     ):
         self.api_key = api_key or os.getenv("OPENTOPOGRAPHY_API_KEY")
         self.dataset = dataset or os.getenv("OPENTOPOGRAPHY_DATASET", self.DEFAULT_DATASET)
-        self.timeout = timeout
+        self.connect_timeout = connect_timeout if connect_timeout is not None else settings.OPENTOPOGRAPHY_CONNECT_TIMEOUT
+        self.read_timeout = read_timeout if read_timeout is not None else settings.OPENTOPOGRAPHY_READ_TIMEOUT
+        self.max_retries = max_retries if max_retries is not None else settings.OPENTOPOGRAPHY_MAX_RETRIES
 
         if not self.api_key:
             raise OpenTopographyError(
@@ -55,19 +72,130 @@ class OpenTopographyService:
             "API_Key": self.api_key,
         }
 
-        try:
-            with httpx.Client(timeout=self.timeout) as client:
-                response = client.get(self.BASE_URL, params=params)
-                response.raise_for_status()
-        except TimeoutError as exc:
-            raise OpenTopographyError(f"Unable to connect to OpenTopography: timeout ({self.timeout}s)") from exc
-        except httpx.HTTPError as exc:
-            raise OpenTopographyError(f"Unable to connect to OpenTopography: {exc}") from exc
+        timeout = httpx.Timeout(
+            connect=self.connect_timeout,
+            read=self.read_timeout,
+            write=self.read_timeout,
+            pool=self.connect_timeout,
+        )
 
-        if not response.content:
-            raise OpenTopographyError("OpenTopography returned an empty response.")
+        last_error: Optional[Exception] = None
+        for attempt in range(self.max_retries + 1):
+            started = time.perf_counter()
+            try:
+                with httpx.Client(timeout=timeout) as client:
+                    response = client.get(self.BASE_URL, params=params)
+                    response.raise_for_status()
+            except httpx.ConnectTimeout as exc:
+                elapsed_ms = (time.perf_counter() - started) * 1000.0
+                last_error = exc
+                logger.warning(
+                    "opentopography_connect_timeout",
+                    extra={"attempt": attempt + 1, "max_retries": self.max_retries, "elapsed_ms": round(elapsed_ms, 2)},
+                )
+                if attempt < self.max_retries:
+                    time.sleep(min(0.5 * (2 ** attempt), 2.0))
+                    logger.info(
+                        "opentopography_retry",
+                        extra={"attempt": attempt + 1, "reason": "connect_timeout"},
+                    )
+                continue
+            except httpx.ReadTimeout as exc:
+                elapsed_ms = (time.perf_counter() - started) * 1000.0
+                last_error = exc
+                logger.warning(
+                    "opentopography_read_timeout",
+                    extra={"attempt": attempt + 1, "max_retries": self.max_retries, "elapsed_ms": round(elapsed_ms, 2)},
+                )
+                if attempt < self.max_retries:
+                    time.sleep(min(0.5 * (2 ** attempt), 2.0))
+                    logger.info(
+                        "opentopography_retry",
+                        extra={"attempt": attempt + 1, "reason": "read_timeout"},
+                    )
+                continue
+            except httpx.TimeoutException as exc:
+                elapsed_ms = (time.perf_counter() - started) * 1000.0
+                last_error = exc
+                logger.warning(
+                    "opentopography_timeout",
+                    extra={"attempt": attempt + 1, "max_retries": self.max_retries, "elapsed_ms": round(elapsed_ms, 2)},
+                )
+                if attempt < self.max_retries:
+                    time.sleep(min(0.5 * (2 ** attempt), 2.0))
+                    logger.info(
+                        "opentopography_retry",
+                        extra={"attempt": attempt + 1, "reason": "timeout"},
+                    )
+                continue
+            except httpx.NetworkError as exc:
+                elapsed_ms = (time.perf_counter() - started) * 1000.0
+                last_error = exc
+                logger.warning(
+                    "opentopography_network_error",
+                    extra={"attempt": attempt + 1, "max_retries": self.max_retries, "elapsed_ms": round(elapsed_ms, 2)},
+                )
+                if attempt < self.max_retries:
+                    time.sleep(min(0.5 * (2 ** attempt), 2.0))
+                    logger.info(
+                        "opentopography_retry",
+                        extra={"attempt": attempt + 1, "reason": "network_error"},
+                    )
+                continue
+            except httpx.HTTPStatusError as exc:
+                elapsed_ms = (time.perf_counter() - started) * 1000.0
+                # 5xx server errors are retryable, 4xx are not
+                if 500 <= exc.response.status_code < 600:
+                    last_error = exc
+                    logger.warning(
+                        "opentopography_server_error",
+                        extra={"attempt": attempt + 1, "status_code": exc.response.status_code, "elapsed_ms": round(elapsed_ms, 2)},
+                    )
+                    if attempt < self.max_retries:
+                        time.sleep(min(0.5 * (2 ** attempt), 2.0))
+                        logger.info(
+                            "opentopography_retry",
+                            extra={"attempt": attempt + 1, "reason": f"http_{exc.response.status_code}"},
+                        )
+                    continue
+                else:
+                    # 4xx client errors are not retryable
+                    logger.error(
+                        "opentopography_client_error",
+                        extra={"status_code": exc.response.status_code, "elapsed_ms": round(elapsed_ms, 2)},
+                    )
+                    raise OpenTopographyPermanentError(
+                        f"OpenTopography returned {exc.response.status_code}: {exc.response.text[:200]}"
+                    ) from exc
+            except Exception as exc:
+                elapsed_ms = (time.perf_counter() - started) * 1000.0
+                last_error = exc
+                logger.warning(
+                    "opentopography_error",
+                    extra={"attempt": attempt + 1, "max_retries": self.max_retries, "elapsed_ms": round(elapsed_ms, 2), "error": type(exc).__name__},
+                )
+                if attempt < self.max_retries:
+                    time.sleep(min(0.5 * (2 ** attempt), 2.0))
+                    logger.info(
+                        "opentopography_retry",
+                        extra={"attempt": attempt + 1, "reason": type(exc).__name__},
+                    )
+                continue
 
-        return self._parse_geotiff(response.content, south, north, west, east)
+            # Success
+            elapsed_ms = (time.perf_counter() - started) * 1000.0
+            logger.info(
+                "opentopography_success",
+                extra={"elapsed_ms": round(elapsed_ms, 2)},
+            )
+            return self._parse_geotiff(response.content, south, north, west, east)
+
+        # All retries exhausted
+        logger.error(
+            "opentopography_retries_exhausted",
+            extra={"max_retries": self.max_retries, "last_error": str(last_error) if last_error else "unknown"},
+        )
+        raise OpenTopographyRetryableError(f"OpenTopography failed after {self.max_retries} retries") from last_error
 
     @staticmethod
     def _validate_bbox(south: float, north: float, west: float, east: float) -> None:

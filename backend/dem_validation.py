@@ -5,7 +5,7 @@ from typing import Dict, List
 import numpy as np
 from scipy.spatial import cKDTree
 
-from models import ContourData, DEM, DEMValidationResult
+from backend.models import ContourData, DEM, DEMValidationResult
 
 
 # ---------------------------------------------------------------------------

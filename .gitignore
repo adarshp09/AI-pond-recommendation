@@ -4,29 +4,25 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+benchmarks/
 # Virtual environments
 .venv/
 venv/
 env/
 ENV/
-result.json
+docs/
+.commandcode
 # ==============================
 # Environment / Secrets
 # ==============================
 .env
 .env.*
 !.env.example
-
+pyproject.toml
+pytest.ini
 # ==============================
 # Testing
 # ==============================
-tests/
-test_cases/
-test_case/
-*_test.py
-test_*.py
-pytest.ini
 .pytest_cache/
 .coverage
 htmlcov/
@@ -99,6 +95,7 @@ pip-wheel-metadata/
 node_modules/
 npm-debug.log*
 yarn-debug.log*
+yarn-error.log*
 pnpm-debug.log*
 
 # ==============================
@@ -112,3 +109,9 @@ Thumbs.db
 # ==============================
 *.pid
 *.lock
+
+# ==============================
+# Cache
+# ==============================
+.cache/
+benchmarks/.geocache/

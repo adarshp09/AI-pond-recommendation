@@ -1,0 +1,2010 @@
+{
+  "generated_at": "2026-09-28T13:57:23.061563+00:00",
+  "mode": "mocked",
+  "endpoint": "/analyzeContour/enriched",
+  "geo_cache": "off",
+  "external_latency_ms": 0.0,
+  "provider_latency_ms": 25.0,
+  "levels_requested": [
+    1,
+    5
+  ],
+  "results": [
+    {
+      "fixture": "valid_kml",
+      "filename": "fixture_valid.kml",
+      "input_bytes": 1219,
+      "endpoint": "/analyzeContour/enriched",
+      "levels": [
+        {
+          "concurrency": 1,
+          "requests": 5,
+          "total_seconds": 1.2222,
+          "throughput_rps": 4.091,
+          "success_count": 5,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 5
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 244.3,
+            "p50": 244.679,
+            "p95": 246.145,
+            "p99": 246.145,
+            "max": 246.145
+          },
+          "cpu_seconds": 0.8862,
+          "cpu_user_seconds": 0.8808,
+          "cpu_sys_seconds": 0.0054,
+          "cpu_utilization_percent": 72.51,
+          "peak_rss_kb": 125712.0,
+          "tracemalloc_peak_kb": 1706.14,
+          "stages_ms_mean": {
+            "DEM": 1.505,
+            "DEM_validation": 4.774,
+            "candidates_deduplication": 0.133,
+            "candidates_filtering": 0.079,
+            "candidates_generation": 1.131,
+            "candidates_ranking": 0.261,
+            "catchment": 26.314,
+            "diagnostics": 0.568,
+            "enrichment": 33.219,
+            "geographic_clustering": 0.071,
+            "geographic_features": 3.64,
+            "geographic_provider": 34.258,
+            "hydrology": 114.717,
+            "parsing": 1.093,
+            "recommendation": 0.691,
+            "request": 243.336,
+            "suitability": 0.112,
+            "upload_validation": 0.039
+          },
+          "external_api_ms_mean": 33.05,
+          "data_quality": {
+            "contour_count": 5,
+            "coordinate_count": 25,
+            "elevation_min_m": 267.0,
+            "elevation_max_m": 271.00000000000006,
+            "elevation_range_m": 4.000000000000057,
+            "elevation_mean_m": 269.0,
+            "dem_rows": 112,
+            "dem_columns": 105,
+            "dem_cells": 11760,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 30.632720112392064,
+            "slope_mean_degrees": 1.868657658198372,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 1.0,
+            "hydrology_valid_cells": 11760,
+            "valid_flow_direction_percentage": 99.35374149659863,
+            "sink_cells": 0,
+            "edge_outflow_cells": 430,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 2898.0,
+            "flow_accumulation_mean_cells": 60.537244897959184,
+            "flow_accumulation_median_cells": 15.0,
+            "catchment_area_m2": 72450.0,
+            "catchment_area_hectares": 7.245,
+            "catchment_area_km2": 0.07245,
+            "catchment_cell_count": 2898,
+            "candidate_count": 4,
+            "rejected_candidate_count": 3,
+            "recommendation_count": 4,
+            "candidates": {
+              "summary": {
+                "seed_count": 11,
+                "accepted_count": 11,
+                "deduplicated_count": 8,
+                "final_count": 8,
+                "rejected_count": 3,
+                "rejection_reasons": {
+                  "candidate_too_close": 3
+                },
+                "min_separation_m": 50.0,
+                "min_drainage_area_cells": 2.0,
+                "max_candidates": 25
+              },
+              "candidates": [
+                {
+                  "candidate_id": "cand-00102-00104",
+                  "candidate_rank": 1,
+                  "candidate_score": 1.0,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 1.0,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 102,
+                  "column": 104,
+                  "latitude": 21.262099073681846,
+                  "longitude": 81.30251137067931,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.795121900098097,
+                  "flow_accumulation_cells": 2898.0,
+                  "drainage_area_m2": 72450.0,
+                  "outlet_id": "outlet-102-104",
+                  "catchment_id": "catchment-10814",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 72,450 m2 across 2,898 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 1.00",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00009-00000",
+                  "candidate_rank": 2,
+                  "candidate_score": 0.998188,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.992754,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 9,
+                  "column": 0,
+                  "latitude": 21.257906604043015,
+                  "longitude": 81.29749077420344,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.80517056317108,
+                  "flow_accumulation_cells": 2877.0,
+                  "drainage_area_m2": 71925.0,
+                  "outlet_id": "outlet-9-0",
+                  "catchment_id": "catchment-945",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 71,925 m2 across 2,877 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.99",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00111-00009",
+                  "candidate_rank": 3,
+                  "candidate_score": 0.990769,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.963078,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 111,
+                  "column": 9,
+                  "latitude": 21.262513814826978,
+                  "longitude": 81.29793377503559,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.772054474506975,
+                  "flow_accumulation_cells": 2791.0,
+                  "drainage_area_m2": 69775.0,
+                  "outlet_id": "outlet-111-9",
+                  "catchment_id": "catchment-11664",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 69,775 m2 across 2,791 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.96",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00095",
+                  "candidate_rank": 4,
+                  "candidate_score": 0.990683,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.962733,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 95,
+                  "latitude": 21.257491876372907,
+                  "longitude": 81.30206822903968,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.796146636496778,
+                  "flow_accumulation_cells": 2790.0,
+                  "drainage_area_m2": 69750.0,
+                  "outlet_id": "outlet-0-95",
+                  "catchment_id": "catchment-95",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 69,750 m2 across 2,790 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.96",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00009",
+                  "candidate_rank": 5,
+                  "candidate_score": 0.401812,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.007246,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 9,
+                  "latitude": 21.25749925176752,
+                  "longitude": 81.29792368876001,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.833197014915007,
+                  "flow_accumulation_cells": 21.0,
+                  "drainage_area_m2": 525.0,
+                  "outlet_id": "outlet-0-9",
+                  "catchment_id": "catchment-9",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 525 m2 across 21 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00111-00095",
+                  "candidate_rank": 6,
+                  "candidate_score": 0.361812,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.007246,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 111,
+                  "column": 95,
+                  "latitude": 21.262506437527772,
+                  "longitude": 81.30207845562447,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.8040957534654085,
+                  "flow_accumulation_cells": 21.0,
+                  "drainage_area_m2": 525.0,
+                  "outlet_id": "outlet-111-95",
+                  "catchment_id": "catchment-11750",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 525 m2 across 21 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00009-00104",
+                  "candidate_rank": 7,
+                  "candidate_score": 0.361639,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.006556,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 9,
+                  "column": 104,
+                  "latitude": 21.257897684774413,
+                  "longitude": 81.30250279015722,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.838606548901488,
+                  "flow_accumulation_cells": 19.0,
+                  "drainage_area_m2": 475.0,
+                  "outlet_id": "outlet-9-104",
+                  "catchment_id": "catchment-1049",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 475 m2 across 19 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00102-00000",
+                  "candidate_rank": 8,
+                  "candidate_score": 0.361639,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.006556,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 102,
+                  "column": 0,
+                  "latitude": 21.26210799488017,
+                  "longitude": 81.29749921256435,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.8500104036218845,
+                  "flow_accumulation_cells": 19.0,
+                  "drainage_area_m2": 475.0,
+                  "outlet_id": "outlet-102-0",
+                  "catchment_id": "catchment-10710",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 475 m2 across 19 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.9 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                }
+              ],
+              "rejections": [
+                {
+                  "candidate_id": "cand-00004-00000",
+                  "row": 4,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00009-00000"
+                },
+                {
+                  "candidate_id": "cand-00109-00104",
+                  "row": 109,
+                  "column": 104,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00111-00095"
+                },
+                {
+                  "candidate_id": "cand-00000-00001",
+                  "row": 0,
+                  "column": 1,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00009-00000"
+                }
+              ]
+            },
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9817176870748299,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 981,
+              "resolved_sink_count": 981,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 0.0014999999996234692,
+              "modified_cell_count": 1045,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                102,
+                104
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 102,
+                  "col": 104,
+                  "kind": "boundary",
+                  "accumulation_cells": 2898.0,
+                  "selected": true
+                },
+                {
+                  "row": 9,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 2877.0,
+                  "selected": false
+                },
+                {
+                  "row": 111,
+                  "col": 9,
+                  "kind": "boundary",
+                  "accumulation_cells": 2791.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 95,
+                  "kind": "boundary",
+                  "accumulation_cells": 2790.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 9,
+                  "kind": "boundary",
+                  "accumulation_cells": 21.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            },
+            "external_data": {
+              "dem": true,
+              "rainfall": true,
+              "land_context": true,
+              "place_search": true,
+              "geocoding": true
+            },
+            "geographic_context": {
+              "provider": "OpenStreetMap Overpass API (land_service.fetch_land_context)",
+              "stats": {
+                "provider_calls": 1,
+                "cache_hits": 0,
+                "cache_misses": 0,
+                "cache_hit_rate": null,
+                "provider_errors": 0,
+                "provider_timeouts": 0,
+                "provider_ms_total": 35.051,
+                "clusters": 1
+              },
+              "feasible_count": 3,
+              "rejected_count": 1,
+              "unknown_count": 0,
+              "feasibility_reasons": {
+                "insufficient_road_clearance": 1
+              },
+              "cluster_count": 1,
+              "config": {
+                "cluster_radius_m": 1000.0,
+                "bbox_buffer_m": 1000.0,
+                "max_concurrent_requests": 4,
+                "provider_timeout_s": 20.0,
+                "provider_retries": 2,
+                "cache_enabled": false,
+                "min_road_distance_m": 25.0,
+                "min_building_distance_m": 25.0,
+                "reject_inside_water": true
+              },
+              "candidates": [
+                {
+                  "candidate_id": "primary",
+                  "latitude": 21.262099073681846,
+                  "longitude": 81.30251137067931,
+                  "road_distance_m": 3.257124318785088,
+                  "building_distance_m": 345.2288093681052,
+                  "water_distance_m": 652.7307521322927,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 1,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "rejected",
+                  "feasibility_reason": "insufficient_road_clearance",
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-1",
+                  "latitude": 21.257906604043015,
+                  "longitude": 81.29749077420344,
+                  "road_distance_m": 517.6320641337752,
+                  "building_distance_m": 352.3937845788239,
+                  "water_distance_m": 1162.0606382133021,
+                  "nearby_feature_counts": {
+                    "roads": 0,
+                    "buildings": 1,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-2",
+                  "latitude": 21.262513814826978,
+                  "longitude": 81.29793377503559,
+                  "road_distance_m": 471.65586266886385,
+                  "building_distance_m": 354.4177878704322,
+                  "water_distance_m": 1125.1319273461943,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 1,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-3",
+                  "latitude": 21.257491876372907,
+                  "longitude": 81.30206822903968,
+                  "road_distance_m": 42.71907714612632,
+                  "building_distance_m": 295.73423576756164,
+                  "water_distance_m": 710.1531760125406,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 2,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                }
+              ]
+            }
+          },
+          "geographic": {
+            "provider_calls": 5,
+            "cache_hits": 0,
+            "cache_misses": 0,
+            "cache_hit_rate": null,
+            "provider_errors": 0,
+            "provider_timeouts": 0,
+            "provider_ms_total": 169.86,
+            "clusters": 5
+          }
+        },
+        {
+          "concurrency": 5,
+          "requests": 5,
+          "total_seconds": 1.2233,
+          "throughput_rps": 4.087,
+          "success_count": 5,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 5
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 1221.867,
+            "p50": 1221.857,
+            "p95": 1222.322,
+            "p99": 1222.322,
+            "max": 1222.322
+          },
+          "cpu_seconds": 0.8828,
+          "cpu_user_seconds": 0.8777,
+          "cpu_sys_seconds": 0.0051,
+          "cpu_utilization_percent": 72.16,
+          "peak_rss_kb": 126736.0,
+          "tracemalloc_peak_kb": 1974.32,
+          "stages_ms_mean": {
+            "DEM": 1.547,
+            "DEM_validation": 4.93,
+            "candidates_deduplication": 0.132,
+            "candidates_filtering": 0.076,
+            "candidates_generation": 1.111,
+            "candidates_ranking": 0.265,
+            "catchment": 25.819,
+            "diagnostics": 0.579,
+            "enrichment": 34.708,
+            "geographic_clustering": 0.074,
+            "geographic_features": 3.54,
+            "geographic_provider": 33.977,
+            "hydrology": 115.201,
+            "parsing": 1.113,
+            "recommendation": 0.697,
+            "request": 1220.277,
+            "suitability": 0.113,
+            "upload_validation": 0.043
+          },
+          "external_api_ms_mean": 34.541,
+          "data_quality": {
+            "contour_count": 5,
+            "coordinate_count": 25,
+            "elevation_min_m": 267.0,
+            "elevation_max_m": 271.00000000000006,
+            "elevation_range_m": 4.000000000000057,
+            "elevation_mean_m": 269.0,
+            "dem_rows": 112,
+            "dem_columns": 105,
+            "dem_cells": 11760,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 30.632720112392064,
+            "slope_mean_degrees": 1.868657658198372,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 1.0,
+            "hydrology_valid_cells": 11760,
+            "valid_flow_direction_percentage": 99.35374149659863,
+            "sink_cells": 0,
+            "edge_outflow_cells": 430,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 2898.0,
+            "flow_accumulation_mean_cells": 60.537244897959184,
+            "flow_accumulation_median_cells": 15.0,
+            "catchment_area_m2": 72450.0,
+            "catchment_area_hectares": 7.245,
+            "catchment_area_km2": 0.07245,
+            "catchment_cell_count": 2898,
+            "candidate_count": 4,
+            "rejected_candidate_count": 3,
+            "recommendation_count": 4,
+            "candidates": {
+              "summary": {
+                "seed_count": 11,
+                "accepted_count": 11,
+                "deduplicated_count": 8,
+                "final_count": 8,
+                "rejected_count": 3,
+                "rejection_reasons": {
+                  "candidate_too_close": 3
+                },
+                "min_separation_m": 50.0,
+                "min_drainage_area_cells": 2.0,
+                "max_candidates": 25
+              },
+              "candidates": [
+                {
+                  "candidate_id": "cand-00102-00104",
+                  "candidate_rank": 1,
+                  "candidate_score": 1.0,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 1.0,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 102,
+                  "column": 104,
+                  "latitude": 21.262099073681846,
+                  "longitude": 81.30251137067931,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.795121900098097,
+                  "flow_accumulation_cells": 2898.0,
+                  "drainage_area_m2": 72450.0,
+                  "outlet_id": "outlet-102-104",
+                  "catchment_id": "catchment-10814",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 72,450 m2 across 2,898 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 1.00",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00009-00000",
+                  "candidate_rank": 2,
+                  "candidate_score": 0.998188,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.992754,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 9,
+                  "column": 0,
+                  "latitude": 21.257906604043015,
+                  "longitude": 81.29749077420344,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.80517056317108,
+                  "flow_accumulation_cells": 2877.0,
+                  "drainage_area_m2": 71925.0,
+                  "outlet_id": "outlet-9-0",
+                  "catchment_id": "catchment-945",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 71,925 m2 across 2,877 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.99",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00111-00009",
+                  "candidate_rank": 3,
+                  "candidate_score": 0.990769,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.963078,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 111,
+                  "column": 9,
+                  "latitude": 21.262513814826978,
+                  "longitude": 81.29793377503559,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.772054474506975,
+                  "flow_accumulation_cells": 2791.0,
+                  "drainage_area_m2": 69775.0,
+                  "outlet_id": "outlet-111-9",
+                  "catchment_id": "catchment-11664",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 69,775 m2 across 2,791 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.96",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00095",
+                  "candidate_rank": 4,
+                  "candidate_score": 0.990683,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.962733,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 95,
+                  "latitude": 21.257491876372907,
+                  "longitude": 81.30206822903968,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.796146636496778,
+                  "flow_accumulation_cells": 2790.0,
+                  "drainage_area_m2": 69750.0,
+                  "outlet_id": "outlet-0-95",
+                  "catchment_id": "catchment-95",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 69,750 m2 across 2,790 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.96",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00009",
+                  "candidate_rank": 5,
+                  "candidate_score": 0.401812,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.007246,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 9,
+                  "latitude": 21.25749925176752,
+                  "longitude": 81.29792368876001,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.833197014915007,
+                  "flow_accumulation_cells": 21.0,
+                  "drainage_area_m2": 525.0,
+                  "outlet_id": "outlet-0-9",
+                  "catchment_id": "catchment-9",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 525 m2 across 21 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00111-00095",
+                  "candidate_rank": 6,
+                  "candidate_score": 0.361812,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.007246,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 111,
+                  "column": 95,
+                  "latitude": 21.262506437527772,
+                  "longitude": 81.30207845562447,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.8040957534654085,
+                  "flow_accumulation_cells": 21.0,
+                  "drainage_area_m2": 525.0,
+                  "outlet_id": "outlet-111-95",
+                  "catchment_id": "catchment-11750",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 525 m2 across 21 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00009-00104",
+                  "candidate_rank": 7,
+                  "candidate_score": 0.361639,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.006556,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 9,
+                  "column": 104,
+                  "latitude": 21.257897684774413,
+                  "longitude": 81.30250279015722,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.838606548901488,
+                  "flow_accumulation_cells": 19.0,
+                  "drainage_area_m2": 475.0,
+                  "outlet_id": "outlet-9-104",
+                  "catchment_id": "catchment-1049",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 475 m2 across 19 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.8 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00102-00000",
+                  "candidate_rank": 8,
+                  "candidate_score": 0.361639,
+                  "score_components": {
+                    "catchment_area": 0.0,
+                    "flow_accumulation": 0.006556,
+                    "slope": 1.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 0.6
+                  },
+                  "row": 102,
+                  "column": 0,
+                  "latitude": 21.26210799488017,
+                  "longitude": 81.29749921256435,
+                  "elevation_m": 267.0,
+                  "slope_degrees": 5.8500104036218845,
+                  "flow_accumulation_cells": 19.0,
+                  "drainage_area_m2": 475.0,
+                  "outlet_id": "outlet-102-0",
+                  "catchment_id": "catchment-10710",
+                  "outlet_kind": "internal",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 475 m2 across 19 upstream cells (area score 0.00)",
+                    "Flow accumulation relative peak score 0.01",
+                    "Slope 5.9 degrees - gentle slope within the preferred embankment range (slope score 1.00)",
+                    "Site elevation 267.0 m (elevation score 1.00)",
+                    "Drains to a internal outlet (hydrological confidence 0.60)"
+                  ]
+                }
+              ],
+              "rejections": [
+                {
+                  "candidate_id": "cand-00004-00000",
+                  "row": 4,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00009-00000"
+                },
+                {
+                  "candidate_id": "cand-00109-00104",
+                  "row": 109,
+                  "column": 104,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00111-00095"
+                },
+                {
+                  "candidate_id": "cand-00000-00001",
+                  "row": 0,
+                  "column": 1,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00009-00000"
+                }
+              ]
+            },
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9817176870748299,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 981,
+              "resolved_sink_count": 981,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 0.0014999999996234692,
+              "modified_cell_count": 1045,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                102,
+                104
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 102,
+                  "col": 104,
+                  "kind": "boundary",
+                  "accumulation_cells": 2898.0,
+                  "selected": true
+                },
+                {
+                  "row": 9,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 2877.0,
+                  "selected": false
+                },
+                {
+                  "row": 111,
+                  "col": 9,
+                  "kind": "boundary",
+                  "accumulation_cells": 2791.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 95,
+                  "kind": "boundary",
+                  "accumulation_cells": 2790.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 9,
+                  "kind": "boundary",
+                  "accumulation_cells": 21.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            },
+            "external_data": {
+              "dem": true,
+              "rainfall": true,
+              "land_context": true,
+              "place_search": true,
+              "geocoding": true
+            },
+            "geographic_context": {
+              "provider": "OpenStreetMap Overpass API (land_service.fetch_land_context)",
+              "stats": {
+                "provider_calls": 1,
+                "cache_hits": 0,
+                "cache_misses": 0,
+                "cache_hit_rate": null,
+                "provider_errors": 0,
+                "provider_timeouts": 0,
+                "provider_ms_total": 35.11,
+                "clusters": 1
+              },
+              "feasible_count": 3,
+              "rejected_count": 1,
+              "unknown_count": 0,
+              "feasibility_reasons": {
+                "insufficient_road_clearance": 1
+              },
+              "cluster_count": 1,
+              "config": {
+                "cluster_radius_m": 1000.0,
+                "bbox_buffer_m": 1000.0,
+                "max_concurrent_requests": 4,
+                "provider_timeout_s": 20.0,
+                "provider_retries": 2,
+                "cache_enabled": false,
+                "min_road_distance_m": 25.0,
+                "min_building_distance_m": 25.0,
+                "reject_inside_water": true
+              },
+              "candidates": [
+                {
+                  "candidate_id": "primary",
+                  "latitude": 21.262099073681846,
+                  "longitude": 81.30251137067931,
+                  "road_distance_m": 3.257124318785088,
+                  "building_distance_m": 345.2288093681052,
+                  "water_distance_m": 652.7307521322927,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 1,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "rejected",
+                  "feasibility_reason": "insufficient_road_clearance",
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-1",
+                  "latitude": 21.257906604043015,
+                  "longitude": 81.29749077420344,
+                  "road_distance_m": 517.6320641337752,
+                  "building_distance_m": 352.3937845788239,
+                  "water_distance_m": 1162.0606382133021,
+                  "nearby_feature_counts": {
+                    "roads": 0,
+                    "buildings": 1,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-2",
+                  "latitude": 21.262513814826978,
+                  "longitude": 81.29793377503559,
+                  "road_distance_m": 471.65586266886385,
+                  "building_distance_m": 354.4177878704322,
+                  "water_distance_m": 1125.1319273461943,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 1,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-3",
+                  "latitude": 21.257491876372907,
+                  "longitude": 81.30206822903968,
+                  "road_distance_m": 42.71907714612632,
+                  "building_distance_m": 295.73423576756164,
+                  "water_distance_m": 710.1531760125406,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 2,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                }
+              ]
+            }
+          },
+          "geographic": {
+            "provider_calls": 5,
+            "cache_hits": 0,
+            "cache_misses": 0,
+            "cache_hit_rate": null,
+            "provider_errors": 0,
+            "provider_timeouts": 0,
+            "provider_ms_total": 168.382,
+            "clusters": 5
+          }
+        }
+      ]
+    },
+    {
+      "fixture": "large_input",
+      "filename": "fixture_large.kml",
+      "input_bytes": 8989,
+      "endpoint": "/analyzeContour/enriched",
+      "levels": [
+        {
+          "concurrency": 1,
+          "requests": 5,
+          "total_seconds": 2.2758,
+          "throughput_rps": 2.197,
+          "success_count": 5,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 5
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 455.015,
+            "p50": 461.204,
+            "p95": 465.105,
+            "p99": 465.105,
+            "max": 465.105
+          },
+          "cpu_seconds": 1.9379,
+          "cpu_user_seconds": 1.9262,
+          "cpu_sys_seconds": 0.0117,
+          "cpu_utilization_percent": 85.15,
+          "peak_rss_kb": 138528.0,
+          "tracemalloc_peak_kb": 3916.49,
+          "stages_ms_mean": {
+            "DEM": 3.423,
+            "DEM_validation": 9.357,
+            "candidates_deduplication": 0.102,
+            "candidates_filtering": 0.085,
+            "candidates_generation": 1.647,
+            "candidates_ranking": 0.209,
+            "catchment": 47.653,
+            "diagnostics": 2.37,
+            "enrichment": 34.199,
+            "geographic_clustering": 0.068,
+            "geographic_features": 4.609,
+            "geographic_provider": 33.77,
+            "hydrology": 287.078,
+            "parsing": 4.11,
+            "recommendation": 0.713,
+            "request": 454.044,
+            "suitability": 0.137,
+            "upload_validation": 0.047
+          },
+          "external_api_ms_mean": 34.035,
+          "data_quality": {
+            "contour_count": 40,
+            "coordinate_count": 200,
+            "elevation_min_m": 200.0,
+            "elevation_max_m": 278.00000000000006,
+            "elevation_range_m": 78.00000000000006,
+            "elevation_mean_m": 239.0,
+            "dem_rows": 179,
+            "dem_columns": 168,
+            "dem_cells": 30072,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 83.77533520807373,
+            "slope_mean_degrees": 13.54752844788605,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 0.9963254855014632,
+            "hydrology_valid_cells": 30072,
+            "valid_flow_direction_percentage": 99.92019154030328,
+            "sink_cells": 0,
+            "edge_outflow_cells": 690,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 7592.0,
+            "flow_accumulation_mean_cells": 111.58040702314446,
+            "flow_accumulation_median_cells": 25.0,
+            "catchment_area_m2": 188200.0,
+            "catchment_area_hectares": 18.82,
+            "catchment_area_km2": 0.1882,
+            "catchment_cell_count": 7528,
+            "candidate_count": 4,
+            "rejected_candidate_count": 5,
+            "recommendation_count": 4,
+            "candidates": {
+              "summary": {
+                "seed_count": 9,
+                "accepted_count": 9,
+                "deduplicated_count": 4,
+                "final_count": 4,
+                "rejected_count": 5,
+                "rejection_reasons": {
+                  "candidate_too_close": 5
+                },
+                "min_separation_m": 50.0,
+                "min_drainage_area_cells": 2.0,
+                "max_candidates": 25
+              },
+              "candidates": [
+                {
+                  "candidate_id": "cand-00178-00003",
+                  "candidate_rank": 1,
+                  "candidate_score": 0.927665,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.99157,
+                    "slope": 0.648861,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 178,
+                  "column": 3,
+                  "latitude": 21.264041146871737,
+                  "longitude": 81.29614466617939,
+                  "elevation_m": 200.0,
+                  "slope_degrees": 11.3519042852952,
+                  "flow_accumulation_cells": 7528.0,
+                  "drainage_area_m2": 188200.0,
+                  "outlet_id": "outlet-178-3",
+                  "catchment_id": "catchment-29907",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 188,200 m2 across 7,528 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.99",
+                    "Slope 11.4 degrees - gentle slope within the preferred embankment range (slope score 0.65)",
+                    "Site elevation 200.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00164",
+                  "candidate_rank": 2,
+                  "candidate_score": 0.889083,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.978135,
+                    "slope": 0.472746,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 164,
+                  "latitude": 21.255985967129824,
+                  "longitude": 81.30388747530088,
+                  "elevation_m": 200.0,
+                  "slope_degrees": 13.564425089003915,
+                  "flow_accumulation_cells": 7426.0,
+                  "drainage_area_m2": 185650.0,
+                  "outlet_id": "outlet-0-164",
+                  "catchment_id": "catchment-164",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 185,650 m2 across 7,426 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.98",
+                    "Slope 13.6 degrees - moderate slope (slope score 0.47)",
+                    "Site elevation 200.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00002-00000",
+                  "candidate_rank": 3,
+                  "candidate_score": 0.888005,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.984457,
+                    "slope": 0.459454,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 2,
+                  "column": 0,
+                  "latitude": 21.256090380613365,
+                  "longitude": 81.29598419400415,
+                  "elevation_m": 200.0,
+                  "slope_degrees": 13.729835920485419,
+                  "flow_accumulation_cells": 7474.0,
+                  "drainage_area_m2": 186850.0,
+                  "outlet_id": "outlet-2-0",
+                  "catchment_id": "catchment-336",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 186,850 m2 across 7,474 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.98",
+                    "Slope 13.7 degrees - moderate slope (slope score 0.46)",
+                    "Site elevation 200.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00175-00167",
+                  "candidate_rank": 4,
+                  "candidate_score": 0.8,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 1.0,
+                    "slope": 0.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 175,
+                  "column": 167,
+                  "latitude": 21.263891544739305,
+                  "longitude": 81.30404827868152,
+                  "elevation_m": 200.0,
+                  "slope_degrees": 24.094842552110705,
+                  "flow_accumulation_cells": 7592.0,
+                  "drainage_area_m2": 189800.0,
+                  "outlet_id": "outlet-175-167",
+                  "catchment_id": "catchment-29567",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 189,800 m2 across 7,592 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 1.00",
+                    "Slope 24.1 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 200.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                }
+              ],
+              "rejections": [
+                {
+                  "candidate_id": "cand-00002-00167",
+                  "row": 2,
+                  "column": 167,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00164"
+                },
+                {
+                  "candidate_id": "cand-00178-00164",
+                  "row": 178,
+                  "column": 164,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00175-00167"
+                },
+                {
+                  "candidate_id": "cand-00000-00002",
+                  "row": 0,
+                  "column": 2,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00002-00000"
+                },
+                {
+                  "candidate_id": "cand-00176-00000",
+                  "row": 176,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00178-00003"
+                },
+                {
+                  "candidate_id": "cand-00000-00166",
+                  "row": 0,
+                  "column": 166,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00164"
+                }
+              ]
+            },
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9885275339185953,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 178,
+              "resolved_sink_count": 178,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 0.0006999999998242856,
+              "modified_cell_count": 229,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                175,
+                167
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 175,
+                  "col": 167,
+                  "kind": "boundary",
+                  "accumulation_cells": 7592.0,
+                  "selected": true
+                },
+                {
+                  "row": 178,
+                  "col": 3,
+                  "kind": "boundary",
+                  "accumulation_cells": 7528.0,
+                  "selected": false
+                },
+                {
+                  "row": 2,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 7474.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 164,
+                  "kind": "boundary",
+                  "accumulation_cells": 7426.0,
+                  "selected": false
+                },
+                {
+                  "row": 2,
+                  "col": 167,
+                  "kind": "boundary",
+                  "accumulation_cells": 7.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            },
+            "external_data": {
+              "dem": true,
+              "rainfall": true,
+              "land_context": true,
+              "place_search": true,
+              "geocoding": true
+            },
+            "geographic_context": {
+              "provider": "OpenStreetMap Overpass API (land_service.fetch_land_context)",
+              "stats": {
+                "provider_calls": 2,
+                "cache_hits": 0,
+                "cache_misses": 0,
+                "cache_hit_rate": null,
+                "provider_errors": 0,
+                "provider_timeouts": 0,
+                "provider_ms_total": 70.149,
+                "clusters": 2
+              },
+              "feasible_count": 3,
+              "rejected_count": 1,
+              "unknown_count": 0,
+              "feasibility_reasons": {
+                "insufficient_building_clearance": 1
+              },
+              "cluster_count": 2,
+              "config": {
+                "cluster_radius_m": 1000.0,
+                "bbox_buffer_m": 1000.0,
+                "max_concurrent_requests": 4,
+                "provider_timeout_s": 20.0,
+                "provider_retries": 2,
+                "cache_enabled": false,
+                "min_road_distance_m": 25.0,
+                "min_building_distance_m": 25.0,
+                "reject_inside_water": true
+              },
+              "candidates": [
+                {
+                  "candidate_id": "primary",
+                  "latitude": 21.264041146871737,
+                  "longitude": 81.29614466617939,
+                  "road_distance_m": 684.2375458988371,
+                  "building_distance_m": 529.7297798616551,
+                  "water_distance_m": 1446.9142999589474,
+                  "nearby_feature_counts": {
+                    "roads": 0,
+                    "buildings": 0,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-2",
+                  "latitude": 21.256090380613365,
+                  "longitude": 81.29598419400415,
+                  "road_distance_m": 700.923538473699,
+                  "building_distance_m": 604.6855640318443,
+                  "water_distance_m": 1462.0995995112228,
+                  "nearby_feature_counts": {
+                    "roads": 0,
+                    "buildings": 0,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-3",
+                  "latitude": 21.263891544739305,
+                  "longitude": 81.30404827868152,
+                  "road_distance_m": 135.73221009490558,
+                  "building_distance_m": 597.638028432094,
+                  "water_distance_m": 682.5418075672649,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 0,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-1",
+                  "latitude": 21.255985967129824,
+                  "longitude": 81.30388747530088,
+                  "road_distance_m": 196.3514063908212,
+                  "building_distance_m": 4.18685529845932,
+                  "water_distance_m": 696.9558371565168,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 2,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "rejected",
+                  "feasibility_reason": "insufficient_building_clearance",
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                }
+              ]
+            }
+          },
+          "geographic": {
+            "provider_calls": 10,
+            "cache_hits": 0,
+            "cache_misses": 0,
+            "cache_hit_rate": null,
+            "provider_errors": 0,
+            "provider_timeouts": 0,
+            "provider_ms_total": 333.801,
+            "clusters": 10
+          }
+        },
+        {
+          "concurrency": 5,
+          "requests": 5,
+          "total_seconds": 2.2468,
+          "throughput_rps": 2.225,
+          "success_count": 5,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 5
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 2245.267,
+            "p50": 2245.209,
+            "p95": 2245.771,
+            "p99": 2245.771,
+            "max": 2245.771
+          },
+          "cpu_seconds": 1.9105,
+          "cpu_user_seconds": 1.8988,
+          "cpu_sys_seconds": 0.0117,
+          "cpu_utilization_percent": 85.03,
+          "peak_rss_kb": 139264.0,
+          "tracemalloc_peak_kb": 4161.8,
+          "stages_ms_mean": {
+            "DEM": 3.324,
+            "DEM_validation": 9.157,
+            "candidates_deduplication": 0.162,
+            "candidates_filtering": 0.081,
+            "candidates_generation": 1.673,
+            "candidates_ranking": 0.27,
+            "catchment": 46.803,
+            "diagnostics": 2.364,
+            "enrichment": 33.86,
+            "geographic_clustering": 0.067,
+            "geographic_features": 4.339,
+            "geographic_provider": 33.829,
+            "hydrology": 284.977,
+            "parsing": 3.959,
+            "recommendation": 0.729,
+            "request": 2243.769,
+            "suitability": 0.143,
+            "upload_validation": 0.049
+          },
+          "external_api_ms_mean": 33.69,
+          "data_quality": {
+            "contour_count": 40,
+            "coordinate_count": 200,
+            "elevation_min_m": 200.0,
+            "elevation_max_m": 278.00000000000006,
+            "elevation_range_m": 78.00000000000006,
+            "elevation_mean_m": 239.0,
+            "dem_rows": 179,
+            "dem_columns": 168,
+            "dem_cells": 30072,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 83.77533520807373,
+            "slope_mean_degrees": 13.54752844788605,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 0.9963254855014632,
+            "hydrology_valid_cells": 30072,
+            "valid_flow_direction_percentage": 99.92019154030328,
+            "sink_cells": 0,
+            "edge_outflow_cells": 690,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 7592.0,
+            "flow_accumulation_mean_cells": 111.58040702314446,
+            "flow_accumulation_median_cells": 25.0,
+            "catchment_area_m2": 188200.0,
+            "catchment_area_hectares": 18.82,
+            "catchment_area_km2": 0.1882,
+            "catchment_cell_count": 7528,
+            "candidate_count": 4,
+            "rejected_candidate_count": 5,
+            "recommendation_count": 4,
+            "candidates": {
+              "summary": {
+                "seed_count": 9,
+                "accepted_count": 9,
+                "deduplicated_count": 4,
+                "final_count": 4,
+                "rejected_count": 5,
+                "rejection_reasons": {
+                  "candidate_too_close": 5
+                },
+                "min_separation_m": 50.0,
+                "min_drainage_area_cells": 2.0,
+                "max_candidates": 25
+              },
+              "candidates": [
+                {
+                  "candidate_id": "cand-00178-00003",
+                  "candidate_rank": 1,
+                  "candidate_score": 0.927665,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.99157,
+                    "slope": 0.648861,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 178,
+                  "column": 3,
+                  "latitude": 21.264041146871737,
+                  "longitude": 81.29614466617939,
+                  "elevation_m": 200.0,
+                  "slope_degrees": 11.3519042852952,
+                  "flow_accumulation_cells": 7528.0,
+                  "drainage_area_m2": 188200.0,
+                  "outlet_id": "outlet-178-3",
+                  "catchment_id": "catchment-29907",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 188,200 m2 across 7,528 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.99",
+                    "Slope 11.4 degrees - gentle slope within the preferred embankment range (slope score 0.65)",
+                    "Site elevation 200.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00000-00164",
+                  "candidate_rank": 2,
+                  "candidate_score": 0.889083,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.978135,
+                    "slope": 0.472746,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 0,
+                  "column": 164,
+                  "latitude": 21.255985967129824,
+                  "longitude": 81.30388747530088,
+                  "elevation_m": 200.0,
+                  "slope_degrees": 13.564425089003915,
+                  "flow_accumulation_cells": 7426.0,
+                  "drainage_area_m2": 185650.0,
+                  "outlet_id": "outlet-0-164",
+                  "catchment_id": "catchment-164",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 185,650 m2 across 7,426 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.98",
+                    "Slope 13.6 degrees - moderate slope (slope score 0.47)",
+                    "Site elevation 200.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00002-00000",
+                  "candidate_rank": 3,
+                  "candidate_score": 0.888005,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 0.984457,
+                    "slope": 0.459454,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 2,
+                  "column": 0,
+                  "latitude": 21.256090380613365,
+                  "longitude": 81.29598419400415,
+                  "elevation_m": 200.0,
+                  "slope_degrees": 13.729835920485419,
+                  "flow_accumulation_cells": 7474.0,
+                  "drainage_area_m2": 186850.0,
+                  "outlet_id": "outlet-2-0",
+                  "catchment_id": "catchment-336",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 186,850 m2 across 7,474 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 0.98",
+                    "Slope 13.7 degrees - moderate slope (slope score 0.46)",
+                    "Site elevation 200.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                },
+                {
+                  "candidate_id": "cand-00175-00167",
+                  "candidate_rank": 4,
+                  "candidate_score": 0.8,
+                  "score_components": {
+                    "catchment_area": 1.0,
+                    "flow_accumulation": 1.0,
+                    "slope": 0.0,
+                    "elevation": 1.0,
+                    "hydrological_confidence": 1.0
+                  },
+                  "row": 175,
+                  "column": 167,
+                  "latitude": 21.263891544739305,
+                  "longitude": 81.30404827868152,
+                  "elevation_m": 200.0,
+                  "slope_degrees": 24.094842552110705,
+                  "flow_accumulation_cells": 7592.0,
+                  "drainage_area_m2": 189800.0,
+                  "outlet_id": "outlet-175-167",
+                  "catchment_id": "catchment-29567",
+                  "outlet_kind": "boundary",
+                  "generation_reason": "local_flow_accumulation_maximum",
+                  "explanation": [
+                    "Contributing drainage area 189,800 m2 across 7,592 upstream cells (area score 1.00)",
+                    "Flow accumulation relative peak score 1.00",
+                    "Slope 24.1 degrees - steep slope reduces embankment suitability (slope score 0.00)",
+                    "Site elevation 200.0 m (elevation score 1.00)",
+                    "Drains to a boundary outlet (hydrological confidence 1.00)"
+                  ]
+                }
+              ],
+              "rejections": [
+                {
+                  "candidate_id": "cand-00002-00167",
+                  "row": 2,
+                  "column": 167,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00164"
+                },
+                {
+                  "candidate_id": "cand-00178-00164",
+                  "row": 178,
+                  "column": 164,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00175-00167"
+                },
+                {
+                  "candidate_id": "cand-00000-00002",
+                  "row": 0,
+                  "column": 2,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00002-00000"
+                },
+                {
+                  "candidate_id": "cand-00176-00000",
+                  "row": 176,
+                  "column": 0,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00178-00003"
+                },
+                {
+                  "candidate_id": "cand-00000-00166",
+                  "row": 0,
+                  "column": 166,
+                  "rejection_reason": "candidate_too_close",
+                  "duplicate_of": "cand-00000-00164"
+                }
+              ]
+            },
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9885275339185953,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 178,
+              "resolved_sink_count": 178,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 0.0006999999998242856,
+              "modified_cell_count": 229,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                175,
+                167
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 175,
+                  "col": 167,
+                  "kind": "boundary",
+                  "accumulation_cells": 7592.0,
+                  "selected": true
+                },
+                {
+                  "row": 178,
+                  "col": 3,
+                  "kind": "boundary",
+                  "accumulation_cells": 7528.0,
+                  "selected": false
+                },
+                {
+                  "row": 2,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 7474.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 164,
+                  "kind": "boundary",
+                  "accumulation_cells": 7426.0,
+                  "selected": false
+                },
+                {
+                  "row": 2,
+                  "col": 167,
+                  "kind": "boundary",
+                  "accumulation_cells": 7.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            },
+            "external_data": {
+              "dem": true,
+              "rainfall": true,
+              "land_context": true,
+              "place_search": true,
+              "geocoding": true
+            },
+            "geographic_context": {
+              "provider": "OpenStreetMap Overpass API (land_service.fetch_land_context)",
+              "stats": {
+                "provider_calls": 2,
+                "cache_hits": 0,
+                "cache_misses": 0,
+                "cache_hit_rate": null,
+                "provider_errors": 0,
+                "provider_timeouts": 0,
+                "provider_ms_total": 54.062,
+                "clusters": 2
+              },
+              "feasible_count": 3,
+              "rejected_count": 1,
+              "unknown_count": 0,
+              "feasibility_reasons": {
+                "insufficient_building_clearance": 1
+              },
+              "cluster_count": 2,
+              "config": {
+                "cluster_radius_m": 1000.0,
+                "bbox_buffer_m": 1000.0,
+                "max_concurrent_requests": 4,
+                "provider_timeout_s": 20.0,
+                "provider_retries": 2,
+                "cache_enabled": false,
+                "min_road_distance_m": 25.0,
+                "min_building_distance_m": 25.0,
+                "reject_inside_water": true
+              },
+              "candidates": [
+                {
+                  "candidate_id": "primary",
+                  "latitude": 21.264041146871737,
+                  "longitude": 81.29614466617939,
+                  "road_distance_m": 684.2375458988371,
+                  "building_distance_m": 529.7297798616551,
+                  "water_distance_m": 1446.9142999589474,
+                  "nearby_feature_counts": {
+                    "roads": 0,
+                    "buildings": 0,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-2",
+                  "latitude": 21.256090380613365,
+                  "longitude": 81.29598419400415,
+                  "road_distance_m": 700.923538473699,
+                  "building_distance_m": 604.6855640318443,
+                  "water_distance_m": 1462.0995995112228,
+                  "nearby_feature_counts": {
+                    "roads": 0,
+                    "buildings": 0,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-3",
+                  "latitude": 21.263891544739305,
+                  "longitude": 81.30404827868152,
+                  "road_distance_m": 135.73221009490558,
+                  "building_distance_m": 597.638028432094,
+                  "water_distance_m": 682.5418075672649,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 0,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "feasible",
+                  "feasibility_reason": null,
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                },
+                {
+                  "candidate_id": "alternative-1",
+                  "latitude": 21.255985967129824,
+                  "longitude": 81.30388747530088,
+                  "road_distance_m": 196.3514063908212,
+                  "building_distance_m": 4.18685529845932,
+                  "water_distance_m": 696.9558371565168,
+                  "nearby_feature_counts": {
+                    "roads": 1,
+                    "buildings": 2,
+                    "water_bodies": 0
+                  },
+                  "feasibility": "rejected",
+                  "feasibility_reason": "insufficient_building_clearance",
+                  "geographic_source": "OpenStreetMap Overpass API (benchmark mock)",
+                  "geographic_status": "available"
+                }
+              ]
+            }
+          },
+          "geographic": {
+            "provider_calls": 10,
+            "cache_hits": 0,
+            "cache_misses": 0,
+            "cache_hit_rate": null,
+            "provider_errors": 0,
+            "provider_timeouts": 0,
+            "provider_ms_total": 326.024,
+            "clusters": 10
+          }
+        }
+      ]
+    }
+  ]
+}

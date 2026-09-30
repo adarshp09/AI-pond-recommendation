@@ -1,0 +1,569 @@
+{
+  "generated_at": "2026-09-28T06:53:09.188958+00:00",
+  "mode": "mocked",
+  "external_latency_ms": 0.0,
+  "levels_requested": [
+    1,
+    5
+  ],
+  "results": [
+    {
+      "fixture": "large_input",
+      "filename": "fixture_large.kml",
+      "input_bytes": 8989,
+      "levels": [
+        {
+          "concurrency": 1,
+          "requests": 3,
+          "total_seconds": 1.1701,
+          "throughput_rps": 2.564,
+          "success_count": 3,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 3
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 389.891,
+            "p50": 387.051,
+            "p95": 401.048,
+            "p99": 401.048,
+            "max": 401.048
+          },
+          "cpu_seconds": 1.1608,
+          "cpu_user_seconds": 1.1493,
+          "cpu_sys_seconds": 0.0115,
+          "cpu_utilization_percent": 99.21,
+          "peak_rss_kb": 134896.0,
+          "tracemalloc_peak_kb": 3956.28,
+          "stages_ms_mean": {
+            "DEM": 3.01,
+            "DEM_validation": 8.501,
+            "catchment": 58.004,
+            "diagnostics": 2.038,
+            "hydrology": 291.85,
+            "parsing": 3.262,
+            "recommendation": 5.459,
+            "request": 389.024,
+            "suitability": 0.161,
+            "upload_validation": 0.04
+          },
+          "external_api_ms_mean": null,
+          "data_quality": {
+            "contour_count": 40,
+            "coordinate_count": 200,
+            "elevation_min_m": 200.0,
+            "elevation_max_m": 278.00000000000006,
+            "elevation_range_m": 78.00000000000006,
+            "elevation_mean_m": 239.0,
+            "dem_rows": 179,
+            "dem_columns": 168,
+            "dem_cells": 30072,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 83.77533520807373,
+            "slope_mean_degrees": 13.54752844788605,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 0.9963254855014632,
+            "hydrology_valid_cells": 30072,
+            "valid_flow_direction_percentage": 99.92019154030328,
+            "sink_cells": 0,
+            "edge_outflow_cells": 690,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 7592.0,
+            "flow_accumulation_mean_cells": 111.58040702314446,
+            "flow_accumulation_median_cells": 25.0,
+            "catchment_area_m2": 189800.0,
+            "catchment_area_hectares": 18.98,
+            "catchment_area_km2": 0.1898,
+            "catchment_cell_count": 7592,
+            "candidate_count": 4,
+            "rejected_candidate_count": 0,
+            "recommendation_count": 4,
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9885275339185953,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 178,
+              "resolved_sink_count": 178,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 0.0006999999998242856,
+              "modified_cell_count": 229,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                175,
+                167
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 175,
+                  "col": 167,
+                  "kind": "boundary",
+                  "accumulation_cells": 7592.0,
+                  "selected": true
+                },
+                {
+                  "row": 178,
+                  "col": 3,
+                  "kind": "boundary",
+                  "accumulation_cells": 7528.0,
+                  "selected": false
+                },
+                {
+                  "row": 2,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 7474.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 164,
+                  "kind": "boundary",
+                  "accumulation_cells": 7426.0,
+                  "selected": false
+                },
+                {
+                  "row": 2,
+                  "col": 167,
+                  "kind": "boundary",
+                  "accumulation_cells": 7.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            }
+          }
+        },
+        {
+          "concurrency": 5,
+          "requests": 3,
+          "total_seconds": 1.1332,
+          "throughput_rps": 2.647,
+          "success_count": 3,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 3
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 1132.312,
+            "p50": 1132.315,
+            "p95": 1132.559,
+            "p99": 1132.559,
+            "max": 1132.559
+          },
+          "cpu_seconds": 1.1289,
+          "cpu_user_seconds": 1.1221,
+          "cpu_sys_seconds": 0.0068,
+          "cpu_utilization_percent": 99.62,
+          "peak_rss_kb": 135712.0,
+          "tracemalloc_peak_kb": 4124.42,
+          "stages_ms_mean": {
+            "DEM": 2.893,
+            "DEM_validation": 8.366,
+            "catchment": 57.153,
+            "diagnostics": 2.0,
+            "hydrology": 281.168,
+            "parsing": 3.18,
+            "recommendation": 5.303,
+            "request": 1130.782,
+            "suitability": 0.141,
+            "upload_validation": 0.043
+          },
+          "external_api_ms_mean": null,
+          "data_quality": {
+            "contour_count": 40,
+            "coordinate_count": 200,
+            "elevation_min_m": 200.0,
+            "elevation_max_m": 278.00000000000006,
+            "elevation_range_m": 78.00000000000006,
+            "elevation_mean_m": 239.0,
+            "dem_rows": 179,
+            "dem_columns": 168,
+            "dem_cells": 30072,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 83.77533520807373,
+            "slope_mean_degrees": 13.54752844788605,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 0.9963254855014632,
+            "hydrology_valid_cells": 30072,
+            "valid_flow_direction_percentage": 99.92019154030328,
+            "sink_cells": 0,
+            "edge_outflow_cells": 690,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 7592.0,
+            "flow_accumulation_mean_cells": 111.58040702314446,
+            "flow_accumulation_median_cells": 25.0,
+            "catchment_area_m2": 189800.0,
+            "catchment_area_hectares": 18.98,
+            "catchment_area_km2": 0.1898,
+            "catchment_cell_count": 7592,
+            "candidate_count": 4,
+            "rejected_candidate_count": 0,
+            "recommendation_count": 4,
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9885275339185953,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 178,
+              "resolved_sink_count": 178,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 0.0006999999998242856,
+              "modified_cell_count": 229,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                175,
+                167
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 175,
+                  "col": 167,
+                  "kind": "boundary",
+                  "accumulation_cells": 7592.0,
+                  "selected": true
+                },
+                {
+                  "row": 178,
+                  "col": 3,
+                  "kind": "boundary",
+                  "accumulation_cells": 7528.0,
+                  "selected": false
+                },
+                {
+                  "row": 2,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 7474.0,
+                  "selected": false
+                },
+                {
+                  "row": 0,
+                  "col": 164,
+                  "kind": "boundary",
+                  "accumulation_cells": 7426.0,
+                  "selected": false
+                },
+                {
+                  "row": 2,
+                  "col": 167,
+                  "kind": "boundary",
+                  "accumulation_cells": 7.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "fixture": "sample",
+      "filename": "sample_contours.kml",
+      "input_bytes": 6710528,
+      "levels": [
+        {
+          "concurrency": 1,
+          "requests": 3,
+          "total_seconds": 27.4138,
+          "throughput_rps": 0.109,
+          "success_count": 3,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 3
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 9137.766,
+            "p50": 9240.08,
+            "p95": 9241.121,
+            "p99": 9241.121,
+            "max": 9241.121
+          },
+          "cpu_seconds": 27.2809,
+          "cpu_user_seconds": 26.8615,
+          "cpu_sys_seconds": 0.4194,
+          "cpu_utilization_percent": 99.52,
+          "peak_rss_kb": 492720.0,
+          "tracemalloc_peak_kb": 85048.38,
+          "stages_ms_mean": {
+            "DEM": 1167.021,
+            "DEM_validation": 371.506,
+            "catchment": 914.23,
+            "diagnostics": 122.906,
+            "hydrology": 4921.632,
+            "parsing": 1398.138,
+            "recommendation": 91.299,
+            "request": 9136.847,
+            "suitability": 0.741,
+            "upload_validation": 3.962
+          },
+          "external_api_ms_mean": null,
+          "data_quality": {
+            "contour_count": 1355,
+            "coordinate_count": 159113,
+            "elevation_min_m": 266.99999999999994,
+            "elevation_max_m": 298.0,
+            "elevation_range_m": 31.000000000000057,
+            "elevation_mean_m": 284.27749077490773,
+            "dem_rows": 527,
+            "dem_columns": 650,
+            "dem_cells": 342550,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 34.83939816414188,
+            "slope_mean_degrees": 3.3992322385125706,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 0.9997134112234701,
+            "hydrology_valid_cells": 342550,
+            "valid_flow_direction_percentage": 99.49175302875493,
+            "sink_cells": 0,
+            "edge_outflow_cells": 2350,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 157912.0,
+            "flow_accumulation_mean_cells": 233.99777842650707,
+            "flow_accumulation_median_cells": 6.0,
+            "catchment_area_m2": 3947800.0,
+            "catchment_area_hectares": 394.78,
+            "catchment_area_km2": 3.9478,
+            "catchment_cell_count": 157912,
+            "candidate_count": 4,
+            "rejected_candidate_count": 0,
+            "recommendation_count": 4,
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9965698438184205,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 49422,
+              "resolved_sink_count": 49422,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 12.005199999998695,
+              "modified_cell_count": 131151,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                0,
+                113
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 0,
+                  "col": 113,
+                  "kind": "boundary",
+                  "accumulation_cells": 157912.0,
+                  "selected": true
+                },
+                {
+                  "row": 526,
+                  "col": 254,
+                  "kind": "boundary",
+                  "accumulation_cells": 39826.0,
+                  "selected": false
+                },
+                {
+                  "row": 437,
+                  "col": 649,
+                  "kind": "boundary",
+                  "accumulation_cells": 25036.0,
+                  "selected": false
+                },
+                {
+                  "row": 526,
+                  "col": 72,
+                  "kind": "boundary",
+                  "accumulation_cells": 22962.0,
+                  "selected": false
+                },
+                {
+                  "row": 23,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 13658.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            }
+          }
+        },
+        {
+          "concurrency": 5,
+          "requests": 3,
+          "total_seconds": 27.6836,
+          "throughput_rps": 0.108,
+          "success_count": 3,
+          "failure_count": 0,
+          "status_counts": {
+            "200": 3
+          },
+          "error_samples": [],
+          "latency_ms": {
+            "mean": 27682.754,
+            "p50": 27682.886,
+            "p95": 27682.957,
+            "p99": 27682.957,
+            "max": 27682.957
+          },
+          "cpu_seconds": 27.5675,
+          "cpu_user_seconds": 27.1554,
+          "cpu_sys_seconds": 0.4121,
+          "cpu_utilization_percent": 99.58,
+          "peak_rss_kb": 511504.0,
+          "tracemalloc_peak_kb": 98231.11,
+          "stages_ms_mean": {
+            "DEM": 1152.568,
+            "DEM_validation": 374.533,
+            "catchment": 910.611,
+            "diagnostics": 122.813,
+            "hydrology": 5031.044,
+            "parsing": 1391.676,
+            "recommendation": 85.383,
+            "request": 27680.879,
+            "suitability": 0.804,
+            "upload_validation": 9122.047
+          },
+          "external_api_ms_mean": null,
+          "data_quality": {
+            "contour_count": 1355,
+            "coordinate_count": 159113,
+            "elevation_min_m": 266.99999999999994,
+            "elevation_max_m": 298.0,
+            "elevation_range_m": 31.000000000000057,
+            "elevation_mean_m": 284.27749077490773,
+            "dem_rows": 527,
+            "dem_columns": 650,
+            "dem_cells": 342550,
+            "dem_resolution_m": 5.0,
+            "dem_nan_percentage": 0.0,
+            "slope_min_degrees": 0.0,
+            "slope_max_degrees": 34.83939816414188,
+            "slope_mean_degrees": 3.3992322385125706,
+            "valid_cell_fraction": 1.0,
+            "dem_status": "good",
+            "dem_quality_score": 0.9997134112234701,
+            "hydrology_valid_cells": 342550,
+            "valid_flow_direction_percentage": 99.49175302875493,
+            "sink_cells": 0,
+            "edge_outflow_cells": 2350,
+            "unresolved_cycle_cells": 0,
+            "flow_accumulation_min_cells": 1.0,
+            "flow_accumulation_max_cells": 157912.0,
+            "flow_accumulation_mean_cells": 233.99777842650707,
+            "flow_accumulation_median_cells": 6.0,
+            "catchment_area_m2": 3947800.0,
+            "catchment_area_hectares": 394.78,
+            "catchment_area_km2": 3.9478,
+            "catchment_cell_count": 157912,
+            "candidate_count": 4,
+            "rejected_candidate_count": 0,
+            "recommendation_count": 4,
+            "hydrology_validation": {
+              "status": "good",
+              "score": 0.9965698438184205,
+              "invalid_reasons": [],
+              "warnings": []
+            },
+            "depressions": {
+              "original_sink_count": 49422,
+              "resolved_sink_count": 49422,
+              "remaining_sink_count": 0,
+              "max_fill_depth_m": 12.005199999998695,
+              "modified_cell_count": 131151,
+              "unreachable_cell_count": 0,
+              "epsilon_m": 0.0001,
+              "filling_applied": true,
+              "warnings": []
+            },
+            "outlet_selection": {
+              "primary": [
+                0,
+                113
+              ],
+              "kind": "boundary",
+              "outlets": [
+                {
+                  "row": 0,
+                  "col": 113,
+                  "kind": "boundary",
+                  "accumulation_cells": 157912.0,
+                  "selected": true
+                },
+                {
+                  "row": 526,
+                  "col": 254,
+                  "kind": "boundary",
+                  "accumulation_cells": 39826.0,
+                  "selected": false
+                },
+                {
+                  "row": 437,
+                  "col": 649,
+                  "kind": "boundary",
+                  "accumulation_cells": 25036.0,
+                  "selected": false
+                },
+                {
+                  "row": 526,
+                  "col": 72,
+                  "kind": "boundary",
+                  "accumulation_cells": 22962.0,
+                  "selected": false
+                },
+                {
+                  "row": 23,
+                  "col": 0,
+                  "kind": "boundary",
+                  "accumulation_cells": 13658.0,
+                  "selected": false
+                }
+              ],
+              "reason": "max_upstream_accumulation_boundary_outlet",
+              "no_valid_outlet": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
