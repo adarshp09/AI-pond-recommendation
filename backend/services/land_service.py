@@ -76,6 +76,7 @@ def _fetch_from_provider(
     )
     headers = {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Accept": "application/json",
         "User-Agent": settings.OVERPASS_USER_AGENT,
     }
 
@@ -146,6 +147,16 @@ def _fetch_from_provider(
                     time.sleep(min(0.1 * (2 ** attempt), 0.5))
                     continue
                 continue
+            elif exc.response.status_code in {408, 425, 429}:
+                last_error = exc
+                logger.warning(
+                    "overpass_rate_limit_or_transient_client_error",
+                    extra={"provider": provider_name, "status_code": exc.response.status_code, "elapsed_ms": round(elapsed_ms, 2)},
+                )
+                if attempt < max_retries:
+                    time.sleep(min(0.5 * (2 ** attempt), 2.0))
+                    continue
+                continue
             else:
                 # 4xx client errors are not retryable
                 logger.warning(
@@ -209,6 +220,7 @@ def fetch_land_context(
     providers = [
         ("primary", primary_url),
         ("fallback", fallback_url),
+        ("secondary_fallback", settings.OVERPASS_SECONDARY_FALLBACK_URL),
     ]
     # Deduplicate providers
     seen = set()
@@ -218,76 +230,65 @@ def fetch_land_context(
             seen.add(url)
             unique_providers.append((name, url))
 
-    last_error: Optional[Exception] = None
-    for provider_name, url in unique_providers:
-        try:
-            result = _fetch_from_provider(
-                url, query, effective_connect_timeout, effective_read_timeout, provider_name
-            )
-            # Successful response — parse and return
-            water_bodies = []
-            roads = []
-            buildings = []
-
-            for element in result.get("elements", []):
-                tags = element.get("tags", {})
-                # Classify water bodies: water, waterway, natural=water, landuse=reservoir|basin
-                if (
-                    "water" in tags
-                    or "waterway" in tags
-                    or tags.get("natural") == "water"
-                    or tags.get("landuse") in {"reservoir", "basin"}
-                ):
-                    water_bodies.append(element)
-                elif "highway" in tags:
-                    roads.append(element)
-                elif "building" in tags:
-                    buildings.append(element)
-
-            return {
-                "bbox": {
-                    "south": south,
-                    "west": west,
-                    "north": north,
-                    "east": east,
-                },
-                "water_bodies": water_bodies,
-                "roads": roads,
-                "buildings": buildings,
-                "source": f"OpenStreetMap Overpass API ({provider_name}: {url})",
-            }
-        except PermanentError as exc:
-            # Non-retryable — log and return empty
-            logger.warning(
-                "overpass_permanent_error",
-                extra={"provider": provider_name, "error": str(exc)},
-            )
-            break
-        except ProviderError as exc:
-            # Retryable — try next provider
-            last_error = exc
-            if provider_name != unique_providers[-1][0]:
-                logger.info(
-                    "overpass_fallback_activated",
-                    extra={"from_provider": provider_name, "to_provider": unique_providers[unique_providers.index((provider_name, url)) + 1][0]},
+    def fetch_uncached() -> Dict[str, Any]:
+        last_error: Optional[Exception] = None
+        for provider_name, url in unique_providers:
+            try:
+                result = _fetch_from_provider(
+                    url, query, effective_connect_timeout, effective_read_timeout, provider_name
                 )
-            continue
+                water_bodies = []
+                roads = []
+                buildings = []
 
-    # All providers failed - return empty land context instead of raising
-    logger.warning(
-        "overpass_all_providers_failed",
-        extra={"provider_count": len(unique_providers), "last_error": str(last_error) if last_error else "unknown"},
-    )
-    return {
-        "bbox": {
-            "south": south,
-            "west": west,
-            "north": north,
-            "east": east,
-        },
-        "water_bodies": [],
-        "roads": [],
-        "buildings": [],
-        "source": "OpenStreetMap Overpass API (unavailable)",
-        "warning": "Land context unavailable - all Overpass providers failed",
-    }
+                for element in result.get("elements", []):
+                    tags = element.get("tags", {})
+                    if (
+                        "water" in tags
+                        or "waterway" in tags
+                        or tags.get("natural") == "water"
+                        or tags.get("landuse") in {"reservoir", "basin"}
+                    ):
+                        water_bodies.append(element)
+                    elif "highway" in tags:
+                        roads.append(element)
+                    elif "building" in tags:
+                        buildings.append(element)
+
+                return {
+                    "bbox": {"south": south, "west": west, "north": north, "east": east},
+                    "water_bodies": water_bodies,
+                    "roads": roads,
+                    "buildings": buildings,
+                    "source": f"OpenStreetMap Overpass API ({provider_name}: {url})",
+                }
+            except PermanentError as exc:
+                logger.warning(
+                    "overpass_permanent_error",
+                    extra={"provider": provider_name, "error": str(exc)},
+                )
+                continue
+            except ProviderError as exc:
+                last_error = exc
+                if provider_name != unique_providers[-1][0]:
+                    next_provider = unique_providers[unique_providers.index((provider_name, url)) + 1][0]
+                    logger.info(
+                        "overpass_fallback_activated",
+                        extra={"from_provider": provider_name, "to_provider": next_provider},
+                    )
+                continue
+
+        logger.warning(
+            "overpass_all_providers_failed",
+            extra={"provider_count": len(unique_providers), "last_error": str(last_error) if last_error else "unknown"},
+        )
+        return {
+            "bbox": {"south": south, "west": west, "north": north, "east": east},
+            "water_bodies": [],
+            "roads": [],
+            "buildings": [],
+            "source": "OpenStreetMap Overpass API (unavailable)",
+            "warning": "Land context unavailable - all Overpass providers failed",
+        }
+
+    return fetch_uncached()

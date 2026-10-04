@@ -125,6 +125,33 @@ def test_fetch_land_context_4xx_no_retry():
         assert "unavailable" in data["source"].lower() or "warning" in data
 
 
+def test_fetch_land_context_rate_limit_falls_back():
+    """A provider rate limit is retried, then the next provider is used."""
+    from config import settings
+
+    primary_url = settings.OVERPASS_URL
+
+    def mock_post(url, **kwargs):
+        if url == primary_url:
+            response = MagicMock()
+            response.status_code = 429
+            response.text = "Too Many Requests"
+            response.raise_for_status.side_effect = httpx.HTTPStatusError(
+                "429", request=MagicMock(), response=response
+            )
+            return response
+        response = MagicMock()
+        response.raise_for_status.return_value = None
+        response.json.return_value = {"elements": [{"type": "way", "tags": {"highway": "primary"}}]}
+        return response
+
+    with patch("services.land_service.httpx.post", side_effect=mock_post):
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+
+    assert data["roads"][0]["tags"]["highway"] == "primary"
+    assert "fallback" in data["source"]
+
+
 def test_fetch_land_context_5xx_retries():
     """5xx server errors are retried and eventually fall back."""
     from config import settings

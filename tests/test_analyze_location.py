@@ -7,6 +7,21 @@ from main import app
 client = TestClient(app)
 
 
+def test_analyze_location_allows_browser_preflight_from_ipv6_dev_server():
+    response = client.options(
+        "/analyzeLocation",
+        headers={
+            "Origin": "http://[::]:5500",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://[::]:5500"
+    assert "POST" in response.headers["access-control-allow-methods"]
+
+
 def _mock_dem_response(dem_array):
     """Helper to create a mock DEM response."""
     return {

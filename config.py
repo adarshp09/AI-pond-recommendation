@@ -38,6 +38,7 @@ class Settings:
     OPENMETEO_ARCHIVE_URL: str = _env("OPENMETEO_ARCHIVE_URL", "https://archive-api.open-meteo.com/v1/archive", cast=str)
     OVERPASS_URL: str = _env("OVERPASS_URL", "https://overpass-api.de/api/interpreter", cast=str)
     OVERPASS_FALLBACK_URL: str = _env("OVERPASS_FALLBACK_URL", "https://overpass.kumi.systems/api/interpreter", cast=str)
+    OVERPASS_SECONDARY_FALLBACK_URL: str = _env("OVERPASS_SECONDARY_FALLBACK_URL", "https://overpass.private.coffee/api/interpreter", cast=str)
     OVERPASS_CONNECT_TIMEOUT: float = _env("OVERPASS_CONNECT_TIMEOUT", 5.0, cast=float)
     OVERPASS_READ_TIMEOUT: float = _env("OVERPASS_READ_TIMEOUT", 25.0, cast=float)
     OVERPASS_RETRIES: int = _env("OVERPASS_RETRIES", 2, cast=int)
