@@ -43,6 +43,25 @@ class Settings:
     OVERPASS_READ_TIMEOUT: float = _env("OVERPASS_READ_TIMEOUT", 25.0, cast=float)
     OVERPASS_RETRIES: int = _env("OVERPASS_RETRIES", 2, cast=int)
     OVERPASS_USER_AGENT: str = _env("OVERPASS_USER_AGENT", "AI-Pond-App/1.0", cast=str)
+
+    # Phase 03 — local-first land provider selection & fallback policy.
+    LOCAL_OSM_ENABLED: bool = _env("LOCAL_OSM_ENABLED", True, cast=bool)
+    LOCAL_OSM_GPKG_PATH: str = _env(
+        "LOCAL_OSM_GPKG_PATH",
+        str(Path(__file__).resolve().parent / "data" / "osm" / "prepared" / "land_context.gpkg"),
+        cast=str,
+    )
+    LOCAL_OSM_MANIFEST_PATH: str = _env(
+        "LOCAL_OSM_MANIFEST_PATH",
+        str(Path(__file__).resolve().parent / "data" / "osm" / "manifest.json"),
+        cast=str,
+    )
+    LOCAL_OSM_MAX_AGE_DAYS: float = _env("LOCAL_OSM_MAX_AGE_DAYS", 180.0, cast=float)
+    LOCAL_OSM_QUERY_BUFFER_M: float = _env("LOCAL_OSM_QUERY_BUFFER_M", 0.0, cast=float)
+    # "local_first" | "local_only" | "overpass_only"
+    LAND_PROVIDER_MODE: str = _env("LAND_PROVIDER_MODE", "local_first", cast=str)
+    OVERPASS_FALLBACK_ENABLED: bool = _env("OVERPASS_FALLBACK_ENABLED", True, cast=bool)
+
     NOMINATIM_URL: str = _env("NOMINATIM_URL", "https://nominatim.openstreetmap.org/search", cast=str)
     PHOTON_URL: str = _env("PHOTON_URL", "https://photon.komoot.io/api/", cast=str)
     HTTP_TIMEOUT_SECONDS: float = _env("HTTP_TIMEOUT_SECONDS", 30.0, cast=float)

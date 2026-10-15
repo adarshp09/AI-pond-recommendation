@@ -3,8 +3,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 import os
+import sys
 import tempfile
 from pathlib import Path
+
+_BACKEND_DIR = Path(__file__).resolve().parent
+if str(_BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_DIR))
 
 import numpy as np
 from pyproj import Transformer
@@ -13,6 +18,7 @@ from fastapi import (
     FastAPI,
     File,
     HTTPException,
+    Request,
     UploadFile,
     Response,
 )
@@ -33,7 +39,7 @@ from parser import (
     parse_contour_file,
 )
 from services.geocoding_service import geocode_place
-from services.land_service import fetch_land_context
+from services.land_service import LandError, fetch_land_context
 from services.location_service import calculate_analysis_bounds
 from services.place_search_service import search_places
 from services.rainfall_service import fetch_historical_rainfall
@@ -47,6 +53,15 @@ from services.kml_export_service import generate_kml, generate_kmz
 from suitability import DEFAULT_WEIGHTS, evaluate_pond_suitability
 from recommendation import rank_candidates
 from terrain import analyze_terrain
+from instrumentation import (
+    attach_payload,
+    begin_request,
+    extract_ids_from_headers,
+    instrumentation_requested,
+    record_stage,
+    reset_trace,
+    set_trace,
+)
 
 try:
     from shapely.ops import transform as transform_geometry
@@ -76,15 +91,33 @@ async def chrome_devtools_config():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-        "http://[::]:5500",
-        "http://[::1]:5500",
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+        "http://[::]:5000",
+        "http://[::1]:5000",
     ],
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def request_instrumentation(request: Request, call_next):
+    ids = extract_ids_from_headers(request.headers)
+    trace = begin_request(
+        request_id=ids["request_id"],
+        job_id=ids["job_id"],
+        dataset_id=ids["dataset_id"],
+        emit=instrumentation_requested(request.headers),
+    )
+    token = set_trace(trace)
+    try:
+        response = await call_next(request)
+        response.headers["X-Request-ID"] = trace.request_id
+        return response
+    finally:
+        reset_trace(token)
 
 
 # ---------------------------------------------------------------------------
@@ -259,6 +292,20 @@ def _lowest_valid_cell(elevation: np.ndarray, valid_mask: np.ndarray) -> tuple[i
     return int(valid_cells[index, 0]), int(valid_cells[index, 1])
 
 
+def _select_outlet(hydrology) -> dict:
+    selection = dict(getattr(hydrology, "outlet_selection", {}) or {})
+    if selection.get("primary") is not None:
+        return selection
+    return {
+        **selection,
+        "primary": None,
+        "kind": None,
+        "outlets": [],
+        "reason": "no_valid_outlet",
+        "no_valid_outlet": True,
+    }
+
+
 def _alternative_candidates(hydrology, dem, main_outlet: tuple[int, int], suitability: dict) -> list[dict]:
     candidates: list[tuple[int, int]] = []
 
@@ -352,8 +399,27 @@ async def gis_land_context(request: dict | None = None):
     except (TypeError, ValueError):
         raise HTTPException(status_code=400, detail={"code": "INVALID_BBOX", "message": "Bounding box must include numeric south, west, north, and east values."}) from None
 
-    result = fetch_land_context(south, west, north, east)
+    try:
+        result = fetch_land_context(south, west, north, east)
+    except LandError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "INVALID_BBOX", "message": str(exc)},
+        ) from exc
     return _json_safe(result)
+
+
+def _land_source_label(land_context: dict | None) -> str:
+    """Map a land-context payload to an accurate data-source label.
+
+    Local OSM data must never be reported as live Overpass data.
+    """
+
+    provider = (land_context or {}).get("provider")
+    return {
+        "local_osm": "local_osm_geopackage",
+        "overpass": "openstreetmap_overpass",
+    }.get(provider, "openstreetmap_overpass")
 
 
 def _build_unified_analysis_response(file_name: str, contour_data, diagnostics: dict, terrain, validation, rainfall=None, land_context=None, recommendation=None):
@@ -427,7 +493,7 @@ def _build_unified_analysis_response(file_name: str, contour_data, diagnostics: 
             "boundary": catchment_boundary,
         },
         "rainfall": rainfall or {"status": "unavailable", "total_precipitation_mm": 0.0, "source": "not available"},
-        "land_features": land_context or {"status": "unavailable", "water_bodies": [], "roads": [], "buildings": []},
+        "land_features": land_context or {"status": "unavailable", "provider": "none", "water_bodies": [], "roads": [], "buildings": []},
         "recommendation": rec,
         "pond_candidate": pond_candidate,
         "alternative_candidates": alternative_candidates,
@@ -441,7 +507,7 @@ def _build_unified_analysis_response(file_name: str, contour_data, diagnostics: 
                 "hydrology_d8",
                 "dem_validation",
                 *(["open_meteo"] if rainfall else []),
-                *(["openstreetmap_overpass"] if land_context else []),
+                *([_land_source_label(land_context)] if land_context else []),
             ],
             "methods": [
                 "linear contour interpolation",
@@ -691,7 +757,7 @@ def _build_location_analysis_response(
         "alternative_candidates": alternative_candidates,
         "rainfall": rainfall or {"status": "unavailable", "total_precipitation_mm": 0.0, "source": "not available"},
         "rainfall_runoff": {"status": "unavailable"},
-        "land_features": land_context or {"status": "unavailable", "water_bodies": [], "roads": [], "buildings": []},
+        "land_features": land_context or {"status": "unavailable", "provider": "none", "water_bodies": [], "roads": [], "buildings": []},
         "recommendation": recommendation,
         "warnings": warnings,
         "error_code": None,
@@ -1009,7 +1075,15 @@ async def analyze_contour(
         valid_mask = hydrology.valid_mask
         
         # Use hydrological outlet (max upstream accumulation) instead of lowest elevation cell
-        outlet_selection = hydrology.outlet_selection
+        outlet_selection = _select_outlet(hydrology)
+        if outlet_selection.get("no_valid_outlet"):
+            return attach_payload({
+                "status": "failed",
+                "error_code": "NO_VALID_OUTLET",
+                "message": "No valid hydrological outlet was found.",
+                "pond_candidate": None,
+                "recommended_location": {"latitude": None, "longitude": None},
+            })
         if outlet_selection.get("primary") is not None:
             outlet = outlet_selection["primary"]
             reason = outlet_selection.get("reason", "")
@@ -1068,7 +1142,7 @@ async def analyze_contour(
                 "geocoding": None,
             }
 
-            return {
+            return attach_payload({
                 "status": "failed",
                 "error_code": "INVALID_DEM",
                 "message": (
@@ -1094,7 +1168,7 @@ async def analyze_contour(
                 "recommendation": recommendation,
                 "warnings": validation.warnings,
                 "enrichment": _json_safe(enrichment),
-            }
+            })
 
         # Build base response
         base_response = {
@@ -1205,7 +1279,21 @@ async def analyze_contour(
             "enrichment": _json_safe(enrichment),
         }
 
-        return response
+        for stage_name in ("upload_validation", "parsing", "diagnostics", "DEM", "DEM_validation", "hydrology"):
+            record_stage(stage_name, 0.0)
+        return attach_payload(
+            response,
+            metrics={
+                "external_data": {
+                    "dem": enrichment.get("dem") is not None,
+                    "rainfall": enrichment.get("rainfall") is not None,
+                    "land_context": enrichment.get("land_context") is not None,
+                },
+                "geographic_context": {
+                    "candidates": [recommendation["best_location"], *alternative_candidates],
+                },
+            },
+        )
 
     except HTTPException:
         raise

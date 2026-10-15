@@ -146,6 +146,22 @@ def test_gis_land_context_rejects_invalid_bbox(client):
     assert response.json()["detail"]["code"] == "INVALID_BBOX"
 
 
+def test_gis_land_context_rejects_inverted_bbox(client, monkeypatch):
+    import main
+    from services.land_service import LandError
+
+    def reject_bbox(*args, **kwargs):
+        raise LandError("south must be smaller than north.")
+
+    monkeypatch.setattr(main, "fetch_land_context", reject_bbox)
+    response = client.post(
+        "/gis/land-context",
+        json={"bbox": {"south": 22.0, "west": 81.0, "north": 21.0, "east": 81.1}},
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"]["code"] == "INVALID_BBOX"
+
+
 def test_suitability_weights_sum_to_one():
     from backend.suitability import DEFAULT_WEIGHTS
 

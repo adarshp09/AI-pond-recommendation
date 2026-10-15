@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:8000/analyzeContour";
+const API_BASE_URL = "http://localhost:6000";
+const API_URL = `${API_BASE_URL}/analyzeContour`;
 
 const el = (id, fallbackId = null) => document.getElementById(id) || (fallbackId ? document.getElementById(fallbackId) : null);
 
@@ -41,7 +42,7 @@ let latestLocationAnalysis = null;
 
 async function exportLocationAnalysis(endpoint, filename) {
   if (!latestLocationAnalysis) return;
-  const response = await fetch(`http://localhost:8000/${endpoint}`, {
+  const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(latestLocationAnalysis),
@@ -330,6 +331,7 @@ function computeAnalysisBounds(payload) {
 
   const values = [
     [getValue(contourExtent, ["min_latitude"]), getValue(contourExtent, ["max_latitude"]), getValue(contourExtent, ["min_longitude"]), getValue(contourExtent, ["max_longitude"])],
+    [Number(payload.min_latitude), Number(payload.max_latitude), Number(payload.min_longitude), Number(payload.max_longitude)],
     [Number(candidate.latitude), Number(candidate.latitude), Number(candidate.longitude), Number(candidate.longitude)],
   ];
 
@@ -474,7 +476,7 @@ async function loadGISLayers(payload) {
   }
 
   try {
-    const response = await fetch("http://localhost:8000/gis/land-context", {
+    const response = await fetch(`${API_BASE_URL}/gis/land-context`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ bbox: bounds }),
@@ -711,7 +713,7 @@ if (analyzeLocationButton) {
     showError("");
 
     try {
-      const response = await fetch("http://localhost:8000/analyzeLocation", {
+      const response = await fetch(`${API_BASE_URL}/analyzeLocation`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

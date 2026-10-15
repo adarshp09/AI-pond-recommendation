@@ -58,7 +58,37 @@ DEFAULT_CACHE_TTL_S = 86_400
 DEFAULT_NEARBY_RADIUS_M = 500.0
 DEFAULT_MAX_ENRICHED_CANDIDATES = 200
 
-PROVIDER_NAME = "OpenStreetMap Overpass API (land_service.fetch_land_context)"
+PROVIDER_NAME = "land_service.fetch_land_context (local-first)"
+
+# Provider payload statuses that mean "no usable data" — never a valid empty result.
+_UNUSABLE_STATUSES = frozenset(
+    {"unavailable", "out_of_coverage", "stale", "missing", "unreadable", "error"}
+)
+
+
+def _payload_is_usable(payload: Any) -> bool:
+    """True when a provider payload carries usable features.
+
+    Payloads without a ``status`` key are treated as usable for backward
+    compatibility with the original Overpass-only contract and with fakes.
+    """
+
+    if not isinstance(payload, dict):
+        return False
+    status = payload.get("status")
+    if status is None:
+        return True
+    return str(status).lower() not in _UNUSABLE_STATUSES
+
+
+def _payload_reason(payload: Any, fallback: str) -> str:
+    if isinstance(payload, dict):
+        if payload.get("warning"):
+            return str(payload["warning"])
+        if payload.get("status"):
+            return str(payload["status"])
+    return fallback
+
 
 
 def _env_float(name: str, default: float) -> float:
@@ -373,7 +403,20 @@ def _count_within(index: _FeatureIndex, point: Point, radius_m: float) -> int:
 # ---------------------------------------------------------------------------
 
 def _cache_key(bbox: Sequence[float]) -> Dict[str, Any]:
-    return {"provider": "osm_overpass_land_context", "bbox": [float(v) for v in bbox]}
+    return {
+        "provider": "osm_overpass_land_context",
+        "mode": _land_provider_mode(),
+        "bbox": [float(v) for v in bbox],
+    }
+
+
+def _land_provider_mode() -> str:
+    try:
+        from config import settings
+
+        return str(getattr(settings, "LAND_PROVIDER_MODE", "local_first"))
+    except Exception:  # pragma: no cover - defensive
+        return "local_first"
 
 
 def _fetch_with_retries(
@@ -542,7 +585,7 @@ def enrich_candidates(
         for cluster_index, member_indices in enumerate(clusters):
             entry = payloads.get(cluster_index, {"_error": "no provider result"})
             payload = entry.get("_payload")
-            provider_ok = isinstance(payload, dict)
+            provider_ok = _payload_is_usable(payload)
 
             feature_index: Dict[str, _FeatureIndex] = {}
             if provider_ok:
@@ -564,7 +607,7 @@ def enrich_candidates(
                 candidate = dict(enrichable[member])
 
                 if not provider_ok:
-                    reason = entry.get("_error") or "provider_unavailable"
+                    reason = _payload_reason(payload, entry.get("_error") or "provider_unavailable")
                     candidate.update(
                         {
                             "road_distance_m": None,

@@ -422,7 +422,7 @@ def test_no_valid_candidate_returns_controlled_failure(client, monkeypatch, samp
 
 
 def test_candidate_diagnostics_behind_opt_in(client, sample_kml_bytes):
-    # Default response schema unchanged - instrumentation not yet integrated
+    # Default response schema unchanged: no instrumentation unless it is requested.
     default = client.post(
         "/analyzeContour",
         files={"file": ("sample_contours.kml", sample_kml_bytes, "application/xml")},
@@ -430,13 +430,13 @@ def test_candidate_diagnostics_behind_opt_in(client, sample_kml_bytes):
     assert "candidates" not in default
     assert "instrumentation" not in default
 
-    # With instrumentation header, still no instrumentation (feature not yet integrated)
+    # Opt-in header enables the instrumentation payload.
     payload = client.post(
         "/analyzeContour",
         files={"file": ("sample_contours.kml", sample_kml_bytes, "application/xml")},
         headers={"X-Pond-Instrumentation": "true"},
     ).json()
-    assert "instrumentation" not in payload
+    assert "instrumentation" in payload
 
 
 def test_recommend_pond_uses_hydrological_candidate(client, sample_kml_bytes):

@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "processing_version": "1.0.0",
+  "generated_at": "2026-10-15T19:02:38+00:00",
+  "crs": "EPSG:4326",
+  "attribution": "\u00a9 OpenStreetMap contributors (ODbL 1.0)",
+  "study_area": {
+    "south": 21.0,
+    "west": 81.05,
+    "north": 21.5,
+    "east": 81.55
+  },
+  "source": {
+    "provider": "Geofabrik",
+    "extract": "central-zone-latest.osm.pbf",
+    "sha256": "67763b8e0e08f2ec30079204e76d7a33e1225e05f6d40d0a3c83d5614b3795cf"
+  },
+  "clip": {
+    "applied": true,
+    "clipped_file": "central-zone-latest.osm.clip-a55b16bf8ce6.osm.pbf",
+    "nodes": 361013,
+    "ways": 38127
+  },
+  "gpkg": {
+    "path": "/Users/adarshpanjwani/Desktop/systam/AI pond recommendation/data/osm/prepared/land_context.gpkg",
+    "filename": "land_context.gpkg",
+    "bytes": 12824576,
+    "layers": [
+      "water_areas",
+      "waterways",
+      "roads",
+      "buildings"
+    ],
+    "spatial_index": true
+  },
+  "layers": {
+    "water_areas": {
+      "count": 553,
+      "geometry": "Unknown"
+    },
+    "waterways": {
+      "count": 233,
+      "geometry": "LineString"
+    },
+    "roads": {
+      "count": 30522,
+      "geometry": "LineString"
+    },
+    "buildings": {
+      "count": 4038,
+      "geometry": "MultiPolygon"
+    }
+  },
+  "feature_counts": {
+    "water": 786,
+    "roads": 30522,
+    "buildings": 4038
+  },
+  "build_seconds": 191.1,
+  "download": {
+    "file": "/Users/adarshpanjwani/Desktop/systam/AI pond recommendation/data/osm/raw/central-zone-latest.osm.pbf",
+    "bytes": 351778710,
+    "sha256": "67763b8e0e08f2ec30079204e76d7a33e1225e05f6d40d0a3c83d5614b3795cf",
+    "md5": "297f3d94fa12ac20ce27f89bb229a032",
+    "verified_at": "2026-10-15T18:57:29+00:00",
+    "retrieved_at": "2026-10-15T18:57:29+00:00",
+    "url": "https://download.geofabrik.de/asia/india/central-zone-latest.osm.pbf",
+    "cached": true
+  }
+}

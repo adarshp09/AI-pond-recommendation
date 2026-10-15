@@ -265,10 +265,10 @@ POND_RAINFALL_CACHE_TTL_S=2592000
 
 ```bash
 # Development
-uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn backend.main:app --reload --host 0.0.0.0 --port 6000
 
 # Production
-uvicorn backend.main:app --host 0.0.0.0 --port 8000 --workers 4
+uvicorn backend.main:app --host 0.0.0.0 --port 6000 --workers 4
 
 # With instrumentation
 POND_INSTRUMENTATION=1 uvicorn backend.main:app --reload
@@ -278,8 +278,8 @@ POND_INSTRUMENTATION=1 uvicorn backend.main:app --reload
 
 Serve `frontend/` with any static server:
 ```bash
-cd frontend && python -m http.server 5500
-# Then open http://localhost:5500
+cd frontend && python -m http.server 5000
+# Then open http://localhost:5000
 ```
 
 ---
@@ -454,7 +454,7 @@ Response: `{ "water_bodies": [...], "roads": [...], "buildings": [...] }`
 
 ### Running the Sample
 ```bash
-curl -X POST "http://localhost:8000/analyzeContour" \
+curl -X POST "http://localhost:6000/analyzeContour" \
   -F "file=@sample_contours.kml"
 ```
 

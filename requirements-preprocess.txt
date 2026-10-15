@@ -1,0 +1,10 @@
+# Optional preprocessing dependencies for the local OSM dataset (Phase 01).
+# These are needed ONLY by scripts/download_osm_data.py and
+# scripts/prepare_osm_data.py — never by the API at request time.
+#
+#   pip install -r requirements-preprocess.txt
+#
+# geopandas/pyproj are already pinned in requirements.txt; pyogrio (GDAL bindings)
+# and osmium (pyosmium, for the bounding-box pre-clip) are added here.
+pyogrio==0.13.0
+osmium>=3.6

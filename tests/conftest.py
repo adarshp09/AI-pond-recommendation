@@ -74,6 +74,12 @@ def mock_external_services(monkeypatch):
 
     import main  # noqa: WPS433 (import inside fixture is intentional)
     import services.land_service as land_service  # noqa: WPS433
+    from config import settings  # noqa: WPS433
+
+    # Keep the default suite deterministic and offline: the local OSM dataset is
+    # only exercised by tests that explicitly opt in (tests/test_local_osm.py and
+    # tests/test_land_provider_fallback.py).
+    monkeypatch.setitem(settings.__dict__, "LOCAL_OSM_ENABLED", False)
 
     monkeypatch.setattr(main, "get_dem_for_bbox", fake_get_dem_for_bbox, raising=False)
     monkeypatch.setattr(main, "fetch_historical_rainfall", fake_fetch_historical_rainfall, raising=False)

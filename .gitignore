@@ -51,6 +51,20 @@ temp/
 *.prj
 *.cpg
 
+# ==============================
+# Local OSM dataset (Phase 01)
+# Large/generated artefacts are never committed; the manifest and README are.
+# ==============================
+data/osm/raw/
+data/osm/prepared/
+*.osm.pbf
+*.osm.bz2
+*.gpkg
+*.gpkg-journal
+*.gpkg-wal
+!data/osm/manifest.json
+!data/osm/README.md
+
 # Keep original sample/input KML if required
 !sample_contours.kml
 

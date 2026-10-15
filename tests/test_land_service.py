@@ -3,7 +3,20 @@ from unittest.mock import MagicMock, patch
 import pytest
 import httpx
 
-from services.land_service import LandError, fetch_land_context, ProviderError, PermanentError
+from services.land_service import (
+    LandError,
+    _build_overpass_query,
+    fetch_land_context,
+    PermanentError,
+    ProviderError,
+)
+
+
+def test_overpass_query_uses_valid_bbox_selectors():
+    query = _build_overpass_query(21.24, 81.28, 21.27, 81.31)
+
+    assert "way[water](21.24,81.28,21.27,81.31);" in query
+    assert "[bbox:" not in query
 
 
 def test_fetch_land_context_parses_overpass_response():
