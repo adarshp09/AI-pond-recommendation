@@ -92,6 +92,14 @@ def mock_external_services(monkeypatch):
     # river exclusion is exercised explicitly in tests/test_spatial_filter.py.
     monkeypatch.setitem(settings.__dict__, "RIVER_EXCLUSION_ENABLED", False)
 
+    # Phase 02 — the legacy contract/golden tests assert the default (engine OFF)
+    # payload shapes. The flag is read from the environment first, so clear it and
+    # pin the settings fallback: a developer .env that enables the engine must not
+    # change the shared suite. Engine behaviour is exercised explicitly in
+    # tests/test_pipeline_engine.py.
+    monkeypatch.delenv("POND_RECOMMENDATION_ENGINE", raising=False)
+    monkeypatch.setitem(settings.__dict__, "POND_RECOMMENDATION_ENGINE", False)
+
     # Phase 05 — cache hit/miss counters are process-global; reset per test.
     from services.cache import reset_cache_metrics
 

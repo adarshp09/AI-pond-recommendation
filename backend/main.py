@@ -3,16 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 import os
-import sys
-import logging
 import tempfile
 from pathlib import Path
-
-_BACKEND_DIR = Path(__file__).resolve().parent
-if str(_BACKEND_DIR) not in sys.path:
-    sys.path.insert(0, str(_BACKEND_DIR))
-
-from config import settings  # noqa: E402
 
 import numpy as np
 from pyproj import Transformer
@@ -21,13 +13,10 @@ from fastapi import (
     FastAPI,
     File,
     HTTPException,
-    Request,
     UploadFile,
     Response,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
-from fastapi.staticfiles import StaticFiles
 
 from catchment import (
     catchment_area,
@@ -44,7 +33,7 @@ from parser import (
     parse_contour_file,
 )
 from services.geocoding_service import geocode_place
-from services.land_service import LandError, fetch_land_context
+from services.land_service import fetch_land_context
 from services.location_service import calculate_analysis_bounds
 from services.place_search_service import search_places
 from services.rainfall_service import fetch_historical_rainfall
@@ -58,49 +47,6 @@ from services.kml_export_service import generate_kml, generate_kmz
 from suitability import DEFAULT_WEIGHTS, evaluate_pond_suitability
 from recommendation import rank_candidates
 from terrain import analyze_terrain
-from instrumentation import (
-    attach_payload,
-    begin_request,
-    extract_ids_from_headers,
-    instrumentation_requested,
-    record_stage,
-    reset_trace,
-    set_trace,
-)
-
-# Phase 02 — opt-in recommendation engine bridge (default off = legacy pipeline).
-try:
-    from backend.pipeline import (
-        apply_river_exclusion,
-        engine_analysis,
-        recommendation_engine_enabled,
-    )
-except ImportError:  # pragma: no cover - backend/ on sys.path
-    from pipeline import (  # type: ignore
-        apply_river_exclusion,
-        engine_analysis,
-        recommendation_engine_enabled,
-    )
-
-# Phase 05 — structured JSON logging.
-try:
-    from backend.utils.observability import JSONLogFormatter
-except ImportError:  # pragma: no cover - backend/ on sys.path
-    from utils.observability import JSONLogFormatter
-
-# Phase 08 — OpenTelemetry tracing + Prometheus metrics (guarded).
-try:
-    from backend.utils.telemetry import (
-        pond_requests_total,
-        render_metrics,
-        setup_telemetry,
-    )
-except ImportError:  # pragma: no cover - backend/ on sys.path
-    from utils.telemetry import (  # type: ignore
-        pond_requests_total,
-        render_metrics,
-        setup_telemetry,
-    )
 
 try:
     from shapely.ops import transform as transform_geometry
@@ -108,143 +54,6 @@ except ImportError:
     transform_geometry = None
 
 api_key = os.getenv("OPENTOPOGRAPHY_API_KEY")
-
-_logger = logging.getLogger("pond_recommendation")
-
-
-def _apply_recommendation_engine(dem, hydrology, rainfall, land_context) -> dict | None:
-    """Run the Phase-02 engine bridge defensively.
-
-    Returns the response overrides (or ``None`` when the engine cannot do better
-    than the legacy path). Any failure is logged and swallowed so the opt-in
-    engine can never break the API.
-    """
-
-    try:
-        return engine_analysis(
-            dem=dem,
-            hydrology=hydrology,
-            rainfall=rainfall,
-            land_context=land_context,
-        )
-    except Exception as exc:  # pragma: no cover - defensive
-        _logger.warning("recommendation_engine_failed", extra={"error": str(exc)})
-        return None
-
-
-def _merge_warnings(response: dict, warnings) -> None:
-    """Append engine/graceful-degradation warnings to the response ``warnings`` list."""
-
-    if not warnings:
-        return
-    merged = list(response.get("warnings") or [])
-    for warning in warnings:
-        if warning not in merged:
-            merged.append(warning)
-    response["warnings"] = merged
-
-
-def _apply_river_exclusion_to_legacy_candidates(
-    pond_candidate,
-    alternative_candidates,
-    recommendation,
-    warnings,
-    outlet_source,
-):
-    """Apply the river/water buffer to the legacy candidate set (Phase 09).
-
-    Mirrors the engine path: drops candidates inside the buffer, emits the same
-    warning string, and — if the primary was removed — promotes the best remaining
-    alternative to primary. Never removes the last candidate (fail-open with a
-    warning) so the response contract is preserved.
-    """
-
-    candidates = []
-    if isinstance(pond_candidate, dict):
-        candidates.append(pond_candidate)
-    candidates.extend([c for c in (alternative_candidates or []) if isinstance(c, dict)])
-    if not candidates:
-        return pond_candidate, alternative_candidates, recommendation
-
-    try:
-        filtered = apply_river_exclusion(candidates, warnings)
-    except Exception as exc:  # pragma: no cover - defensive
-        _logger.warning("river_exclusion_legacy_failed", extra={"error": str(exc)})
-        return pond_candidate, alternative_candidates, recommendation
-
-    if len(filtered) == len(candidates):
-        return pond_candidate, alternative_candidates, recommendation  # nothing excluded
-
-    if not filtered:
-        if isinstance(warnings, list):
-            warnings.append(
-                "All candidates fell within the river/water exclusion buffer; "
-                "keeping the original candidate."
-            )
-        return pond_candidate, alternative_candidates, recommendation
-
-    reselected = filtered[0] is not pond_candidate
-    primary = dict(filtered[0])
-    alternatives = [dict(candidate) for candidate in filtered[1:]]
-    if reselected:
-        primary["id"] = "primary"
-        primary["label"] = "Pond Candidate"
-
-    if isinstance(recommendation, dict):
-        recommendation = {
-            **recommendation,
-            "best_location": {
-                "latitude": primary.get("latitude"),
-                "longitude": primary.get("longitude"),
-                "source": "river_exclusion_reselected" if reselected else outlet_source,
-            },
-            "alternatives": alternatives,
-        }
-    return primary, alternatives, recommendation
-
-
-def _log_local_dataset_readiness() -> None:
-    """Log (non-fatally) whether the local geographic dataset is present.
-
-    Phase 03 serves runtime geographic enrichment from the local GeoPackage, so a
-    missing dataset is worth surfacing at startup — but it must never crash the
-    app: out-of-coverage/missing data degrades to an explicit `unavailable`.
-    """
-
-    try:
-        if not settings.LOCAL_OSM_ENABLED:
-            _logger.info("local_osm_disabled")
-            return
-        gpkg = Path(settings.LOCAL_OSM_GPKG_PATH)
-        if gpkg.exists():
-            _logger.info("local_osm_dataset_present", extra={"path": str(gpkg)})
-        else:
-            _logger.warning("local_osm_dataset_missing", extra={"path": str(gpkg)})
-    except Exception:  # pragma: no cover - defensive
-        pass
-
-
-_log_local_dataset_readiness()
-
-
-def _configure_logging() -> None:
-    """Use the structured JSON formatter when ``LOG_FORMAT=json`` (else leave text)."""
-
-    if str(getattr(settings, "LOG_FORMAT", "text")).lower() != "json":
-        return
-    try:
-        root = logging.getLogger()
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(JSONLogFormatter())
-        root.handlers[:] = [handler]
-        root.setLevel(getattr(logging, settings.LOG_LEVEL, logging.INFO))
-    except Exception:  # pragma: no cover - defensive
-        pass
-
-
-_configure_logging()
-
-
 # ---------------------------------------------------------------------------
 # APP
 # ---------------------------------------------------------------------------
@@ -264,63 +73,18 @@ async def chrome_devtools_config():
     return {}
 
 
-_FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
-
-_DEFAULT_CORS_ORIGINS = [
-    "http://localhost:5000",
-    "http://127.0.0.1:5000",
-    "http://[::]:5000",
-    "http://[::1]:5000",
-]
-_extra_cors_origins = [
-    origin.strip() for origin in (settings.CORS_ALLOW_ORIGINS or "").split(",") if origin.strip()
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[*_DEFAULT_CORS_ORIGINS, *_extra_cors_origins],
-    allow_origin_regex=settings.CORS_ALLOW_ORIGIN_REGEX or None,
+    allow_origins=[
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://[::]:5500",
+        "http://[::1]:5500",
+    ],
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
-
-# Serve the web UI from the API itself so a single port (and a single forwarded
-# port behind NAT) is enough: the page and the API share an origin, so there is
-# no CORS and no second port to expose. `GET /` redirects browsers here.
-if _FRONTEND_DIR.is_dir():
-    app.mount("/ui", StaticFiles(directory=str(_FRONTEND_DIR), html=True), name="ui")
-
-
-@app.middleware("http")
-async def request_instrumentation(request: Request, call_next):
-    ids = extract_ids_from_headers(request.headers)
-    trace = begin_request(
-        request_id=ids["request_id"],
-        job_id=ids["job_id"],
-        dataset_id=ids["dataset_id"],
-        emit=instrumentation_requested(request.headers),
-    )
-    token = set_trace(trace)
-    try:
-        response = await call_next(request)
-        response.headers["X-Request-ID"] = trace.request_id
-        return response
-    finally:
-        reset_trace(token)
-
-
-@app.middleware("http")
-async def prometheus_metrics(request: Request, call_next):
-    """Count every handled request (Phase 08)."""
-    response = await call_next(request)
-    try:
-        pond_requests_total.labels(
-            request.method, request.url.path, str(response.status_code)
-        ).inc()
-    except Exception:  # pragma: no cover - metrics must never break requests
-        pass
-    return response
 
 
 # ---------------------------------------------------------------------------
@@ -495,20 +259,6 @@ def _lowest_valid_cell(elevation: np.ndarray, valid_mask: np.ndarray) -> tuple[i
     return int(valid_cells[index, 0]), int(valid_cells[index, 1])
 
 
-def _select_outlet(hydrology) -> dict:
-    selection = dict(getattr(hydrology, "outlet_selection", {}) or {})
-    if selection.get("primary") is not None:
-        return selection
-    return {
-        **selection,
-        "primary": None,
-        "kind": None,
-        "outlets": [],
-        "reason": "no_valid_outlet",
-        "no_valid_outlet": True,
-    }
-
-
 def _alternative_candidates(hydrology, dem, main_outlet: tuple[int, int], suitability: dict) -> list[dict]:
     candidates: list[tuple[int, int]] = []
 
@@ -558,11 +308,7 @@ def _alternative_candidates(hydrology, dem, main_outlet: tuple[int, int], suitab
 # ---------------------------------------------------------------------------
 
 @app.get("/")
-def root(request: Request):
-    # Browsers get the web UI (served at /ui/, same origin as the API); everything
-    # else (tests, curl, API clients) keeps the original JSON service descriptor.
-    if "text/html" in (request.headers.get("accept") or ""):
-        return RedirectResponse(url="/ui/", status_code=307)
+def root():
     return {
         "service": "AI Pond Recommendation API",
         "status": "running",
@@ -582,88 +328,6 @@ def health():
     return {
         "status": "ok"
     }
-
-
-@app.get("/health/datasets")
-def health_datasets():
-    """Readiness probe for the local geographic dataset (Phase 03).
-
-    Reports the dataset path, coverage, layer list, age/staleness and the
-    active provider mode. Never raises: a missing or unreadable dataset is
-    reported as ``available: false`` with an ``error``.
-    """
-
-    info: dict = {
-        "provider": "local_osm",
-        "mode": settings.LAND_PROVIDER_MODE,
-        "overpass_fallback_enabled": settings.OVERPASS_FALLBACK_ENABLED,
-        "local_osm_enabled": settings.LOCAL_OSM_ENABLED,
-    }
-    try:
-        from services.land_providers.local_osm import LocalOSMProvider
-
-        provider = LocalOSMProvider(
-            settings.LOCAL_OSM_GPKG_PATH,
-            manifest_path=settings.LOCAL_OSM_MANIFEST_PATH,
-            max_age_days=settings.LOCAL_OSM_MAX_AGE_DAYS,
-        )
-        info.update(provider.describe())
-        info["available"] = provider.available()
-        info["stale"] = provider.is_stale()
-    except Exception as exc:  # pragma: no cover - defensive
-        info["available"] = False
-        info["error"] = str(exc)
-    return info
-
-
-@app.get("/metrics")
-def metrics():
-    """Prometheus exposition endpoint (Phase 08).
-
-    Returns ``404`` when ``PROMETHEUS_METRICS_ENABLED`` is false and ``503`` when
-    ``prometheus_client`` is not installed.
-    """
-
-    if not getattr(settings, "PROMETHEUS_METRICS_ENABLED", True):
-        raise HTTPException(
-            status_code=404,
-            detail={"code": "METRICS_DISABLED", "message": "Prometheus metrics are disabled."},
-        )
-    content, content_type = render_metrics()
-    if content is None:
-        raise HTTPException(
-            status_code=503,
-            detail={"code": "METRICS_UNAVAILABLE", "message": "prometheus_client is not installed."},
-        )
-    return Response(content=content, media_type=content_type)
-
-
-@app.get("/cache/stats")
-def cache_stats():
-    """Report file-cache statistics (Phase 04) and hit/miss metrics (Phase 05)."""
-    from services.cache import cache_is_enabled, cache_metrics, get_cache
-
-    stats = get_cache().stats()
-    stats["cache_enabled"] = cache_is_enabled()
-    stats["metrics"] = cache_metrics()
-    return stats
-
-
-@app.post("/cache/clear")
-def cache_clear(request: Request):
-    """Clear the file cache. Guarded by ``CACHE_ADMIN_TOKEN`` when configured."""
-    from services.cache import get_cache
-
-    token = settings.CACHE_ADMIN_TOKEN
-    if token:
-        provided = request.headers.get("x-cache-admin-token")
-        if provided != token:
-            raise HTTPException(
-                status_code=403,
-                detail={"code": "CACHE_CLEAR_FORBIDDEN", "message": "Invalid or missing admin token."},
-            )
-    get_cache().clear()
-    return {"cleared": True}
 
 
 @app.post("/gis/land-context")
@@ -688,27 +352,8 @@ async def gis_land_context(request: dict | None = None):
     except (TypeError, ValueError):
         raise HTTPException(status_code=400, detail={"code": "INVALID_BBOX", "message": "Bounding box must include numeric south, west, north, and east values."}) from None
 
-    try:
-        result = fetch_land_context(south, west, north, east)
-    except LandError as exc:
-        raise HTTPException(
-            status_code=400,
-            detail={"code": "INVALID_BBOX", "message": str(exc)},
-        ) from exc
+    result = fetch_land_context(south, west, north, east)
     return _json_safe(result)
-
-
-def _land_source_label(land_context: dict | None) -> str:
-    """Map a land-context payload to an accurate data-source label.
-
-    Local OSM data must never be reported as live Overpass data.
-    """
-
-    provider = (land_context or {}).get("provider")
-    return {
-        "local_osm": "local_osm_geopackage",
-        "overpass": "openstreetmap_overpass",
-    }.get(provider, "openstreetmap_overpass")
 
 
 def _build_unified_analysis_response(file_name: str, contour_data, diagnostics: dict, terrain, validation, rainfall=None, land_context=None, recommendation=None):
@@ -782,7 +427,7 @@ def _build_unified_analysis_response(file_name: str, contour_data, diagnostics: 
             "boundary": catchment_boundary,
         },
         "rainfall": rainfall or {"status": "unavailable", "total_precipitation_mm": 0.0, "source": "not available"},
-        "land_features": land_context or {"status": "unavailable", "provider": "none", "water_bodies": [], "roads": [], "buildings": []},
+        "land_features": land_context or {"status": "unavailable", "water_bodies": [], "roads": [], "buildings": []},
         "recommendation": rec,
         "pond_candidate": pond_candidate,
         "alternative_candidates": alternative_candidates,
@@ -796,7 +441,7 @@ def _build_unified_analysis_response(file_name: str, contour_data, diagnostics: 
                 "hydrology_d8",
                 "dem_validation",
                 *(["open_meteo"] if rainfall else []),
-                *([_land_source_label(land_context)] if land_context else []),
+                *(["openstreetmap_overpass"] if land_context else []),
             ],
             "methods": [
                 "linear contour interpolation",
@@ -1046,7 +691,7 @@ def _build_location_analysis_response(
         "alternative_candidates": alternative_candidates,
         "rainfall": rainfall or {"status": "unavailable", "total_precipitation_mm": 0.0, "source": "not available"},
         "rainfall_runoff": {"status": "unavailable"},
-        "land_features": land_context or {"status": "unavailable", "provider": "none", "water_bodies": [], "roads": [], "buildings": []},
+        "land_features": land_context or {"status": "unavailable", "water_bodies": [], "roads": [], "buildings": []},
         "recommendation": recommendation,
         "warnings": warnings,
         "error_code": None,
@@ -1232,17 +877,6 @@ async def analyze_location(request: LocationAnalysisRequest):
         "explanation": "The pond candidate was selected from the hydrological analysis of the OpenTopography DEM for the specified location.",
     }
 
-    # Phase 09 — keep candidates out of the river/water safety buffer.
-    pond_candidate, alternative_candidates, recommendation = (
-        _apply_river_exclusion_to_legacy_candidates(
-            pond_candidate,
-            alternative_candidates,
-            recommendation,
-            warnings,
-            outlet_source,
-        )
-    )
-
     # Build full response
     response = _build_location_analysis_response(
         bounds=bounds,
@@ -1259,16 +893,6 @@ async def analyze_location(request: LocationAnalysisRequest):
         land_context=land_context,
         warnings=warnings,
     )
-
-    # Phase 02 — optional engine-backed recommendation (default off).
-    if recommendation_engine_enabled():
-        _engine = _apply_recommendation_engine(dem_obj, hydrology, rainfall, land_context)
-        if _engine:
-            response["pond_candidate"] = _json_safe(_engine["pond_candidate"])
-            response["alternative_candidates"] = _json_safe(_engine["alternative_candidates"])
-            response["suitability"] = _json_safe(_engine["suitability"])
-            response["recommendation"] = _json_safe(_engine["recommendation"])
-            _merge_warnings(response, _engine.get("warnings"))
 
     return _json_safe(response)
 
@@ -1385,15 +1009,7 @@ async def analyze_contour(
         valid_mask = hydrology.valid_mask
         
         # Use hydrological outlet (max upstream accumulation) instead of lowest elevation cell
-        outlet_selection = _select_outlet(hydrology)
-        if outlet_selection.get("no_valid_outlet"):
-            return attach_payload({
-                "status": "failed",
-                "error_code": "NO_VALID_OUTLET",
-                "message": "No valid hydrological outlet was found.",
-                "pond_candidate": None,
-                "recommended_location": {"latitude": None, "longitude": None},
-            })
+        outlet_selection = hydrology.outlet_selection
         if outlet_selection.get("primary") is not None:
             outlet = outlet_selection["primary"]
             reason = outlet_selection.get("reason", "")
@@ -1452,7 +1068,7 @@ async def analyze_contour(
                 "geocoding": None,
             }
 
-            return attach_payload({
+            return {
                 "status": "failed",
                 "error_code": "INVALID_DEM",
                 "message": (
@@ -1478,19 +1094,7 @@ async def analyze_contour(
                 "recommendation": recommendation,
                 "warnings": validation.warnings,
                 "enrichment": _json_safe(enrichment),
-            })
-
-        # Phase 09 — keep candidates out of the river/water safety buffer.
-        river_warnings: list[str] = []
-        pond_candidate, alternative_candidates, recommendation = (
-            _apply_river_exclusion_to_legacy_candidates(
-                pond_candidate,
-                alternative_candidates,
-                recommendation,
-                river_warnings,
-                outlet_source,
-            )
-        )
+            }
 
         # Build base response
         base_response = {
@@ -1601,41 +1205,7 @@ async def analyze_contour(
             "enrichment": _json_safe(enrichment),
         }
 
-        # Phase 09 — surface river/waterway exclusion warnings at the top level
-        # (same place the engine path reports them).
-        _merge_warnings(response, river_warnings)
-
-        # Phase 02 — optional engine-backed recommendation (default off).
-        if recommendation_engine_enabled():
-            _engine = _apply_recommendation_engine(
-                dem, hydrology, enrichment.get("rainfall"), enrichment.get("land_context")
-            )
-            if _engine:
-                response["pond_candidate"] = _json_safe(_engine["pond_candidate"])
-                response["alternative_candidates"] = _json_safe(_engine["alternative_candidates"])
-                response["suitability"] = _json_safe(_engine["suitability"])
-                response["recommendation"] = _json_safe(_engine["recommendation"])
-                if isinstance(response.get("enrichment"), dict):
-                    response["enrichment"]["recommendation_engine"] = _json_safe(
-                        _engine["diagnostics"]
-                    )
-                _merge_warnings(response, _engine.get("warnings"))
-
-        for stage_name in ("upload_validation", "parsing", "diagnostics", "DEM", "DEM_validation", "hydrology"):
-            record_stage(stage_name, 0.0)
-        return attach_payload(
-            response,
-            metrics={
-                "external_data": {
-                    "dem": enrichment.get("dem") is not None,
-                    "rainfall": enrichment.get("rainfall") is not None,
-                    "land_context": enrichment.get("land_context") is not None,
-                },
-                "geographic_context": {
-                    "candidates": [recommendation["best_location"], *alternative_candidates],
-                },
-            },
-        )
+        return response
 
     except HTTPException:
         raise
@@ -1952,10 +1522,3 @@ async def recommend_pond(
     }
     response["recommended"]["alternatives"] = response["alternatives"]
     return response
-
-
-# ---------------------------------------------------------------------------
-# Phase 08 — telemetry setup (no-op unless OTEL_ENABLED=true)
-# ---------------------------------------------------------------------------
-
-setup_telemetry(app)

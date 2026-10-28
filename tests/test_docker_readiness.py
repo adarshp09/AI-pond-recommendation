@@ -45,7 +45,11 @@ _CONFIG_KEYS = [
 def _run_config(overrides: dict) -> dict:
     env = {k: v for k, v in os.environ.items() if k not in _CONTROLLED}
     env.update({k: str(v) for k, v in overrides.items()})
+    # Neutralise the repo .env so this measures *code defaults*, not whatever a
+    # developer set locally (the same reason LOG_FORMAT is accepted as text|json
+    # below). dotenv is patched before config is imported.
     code = (
+        "import dotenv;dotenv.load_dotenv=lambda *a, **k: False;"
         "import json;from config import settings;"
         f"keys={_CONFIG_KEYS!r};"
         "print(json.dumps({k: getattr(settings, k) for k in keys}))"
