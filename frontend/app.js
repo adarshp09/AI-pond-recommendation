@@ -1,4 +1,31 @@
-const API_BASE_URL = "http://localhost:6000";
+// Resolve the backend base URL.
+// The UI is normally served on the same origin as the API — either by the API
+// itself (single-port, path /ui/...) or by scripts/frontend_server.py, which
+// proxies /analyze*, /gis/*, /docs … to the backend. So same-origin is the
+// default; use ?api= (or window.POND_API_BASE_URL) when the API lives elsewhere.
+// Precedence: ?api= > window.POND_API_BASE_URL > same-origin > localhost.
+const DEFAULT_API_PORT = 5000;
+
+const API_BASE_URL = (() => {
+  const pageLocation = (typeof window !== "undefined" && window.location) || {};
+  let configured = null;
+  try {
+    if (typeof URLSearchParams !== "undefined" && pageLocation.search) {
+      configured = new URLSearchParams(pageLocation.search).get("api");
+    }
+  } catch (error) {
+    configured = null;
+  }
+  if (configured === null && typeof window !== "undefined") {
+    const injected = window.POND_API_BASE_URL;
+    if (typeof injected === "string") configured = injected;
+  }
+  if (configured) return String(configured).replace(/\/+$/, "");
+  if (!pageLocation.origin || pageLocation.protocol === "file:") {
+    return `http://localhost:${DEFAULT_API_PORT}`;
+  }
+  return pageLocation.origin;
+})();
 const API_URL = `${API_BASE_URL}/analyzeContour`;
 
 const el = (id, fallbackId = null) => document.getElementById(id) || (fallbackId ? document.getElementById(fallbackId) : null);

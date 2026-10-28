@@ -81,6 +81,22 @@ def mock_external_services(monkeypatch):
     # tests/test_land_provider_fallback.py).
     monkeypatch.setitem(settings.__dict__, "LOCAL_OSM_ENABLED", False)
 
+    # Phase 04 — keep provider caching out of the shared suite run. Several tests
+    # reuse identical query keys ("Nagpur", the same rainfall window, ...) with
+    # different mocked responses, so caching must be OFF by default; caching is
+    # exercised explicitly (with an isolated CACHE_DIR) in tests/test_caching.py.
+    monkeypatch.setitem(settings.__dict__, "CACHE_ENABLED", False)
+    monkeypatch.setitem(settings.__dict__, "GEOCODING_MIN_INTERVAL_S", 0.0)
+
+    # Phase 09 — keep the shared suite independent of the on-disk GeoPackage;
+    # river exclusion is exercised explicitly in tests/test_spatial_filter.py.
+    monkeypatch.setitem(settings.__dict__, "RIVER_EXCLUSION_ENABLED", False)
+
+    # Phase 05 — cache hit/miss counters are process-global; reset per test.
+    from services.cache import reset_cache_metrics
+
+    reset_cache_metrics()
+
     monkeypatch.setattr(main, "get_dem_for_bbox", fake_get_dem_for_bbox, raising=False)
     monkeypatch.setattr(main, "fetch_historical_rainfall", fake_fetch_historical_rainfall, raising=False)
     monkeypatch.setattr(main, "fetch_land_context", fake_fetch_land_context, raising=False)
@@ -89,6 +105,22 @@ def mock_external_services(monkeypatch):
     # Also patch the service module directly so any code path importing it
     # (e.g. geographic_context) never reaches the real provider in tests.
     monkeypatch.setattr(land_service, "fetch_land_context", fake_fetch_land_context, raising=False)
+
+    # Phase 02 — the opt-in engine bridge (backend.pipeline) resolves the land
+    # provider dynamically from services.land_service (patched above) and calls
+    # rainfall_runoff's module-level fetch_historical_rainfall; patch that too so
+    # the engine path is fully offline in tests.
+    try:
+        import backend.rainfall_runoff as rainfall_runoff
+
+        monkeypatch.setattr(
+            rainfall_runoff,
+            "fetch_historical_rainfall",
+            fake_fetch_historical_rainfall,
+            raising=False,
+        )
+    except Exception:  # pragma: no cover - import guard
+        pass
     yield
 
 

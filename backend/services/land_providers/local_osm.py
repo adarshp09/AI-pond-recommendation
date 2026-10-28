@@ -25,6 +25,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from config import settings
+
+try:
+    from services.cache import cache_is_enabled, get_cache
+except ImportError:  # pragma: no cover - alternative import path
+    from ..cache import cache_is_enabled, get_cache
+
 from .base import (
     COVERAGE_FULL,
     COVERAGE_NONE,
@@ -282,11 +289,53 @@ class LocalOSMProvider(LandProvider):
                 f"query bbox {relation} coverage for local OSM dataset",
             )
         if self.is_stale():
+            age = (
+                f"{descriptor.age_days:.1f} days old"
+                if descriptor.age_days is not None
+                else "of unknown age"
+            )
             raise ProviderUnavailable(
                 STATUS_STALE,
-                f"local OSM dataset is {descriptor.age_days:.1f} days old "
-                f"(max {self.max_age_days})",
+                f"local OSM dataset is {age} (max {self.max_age_days})",
             )
+
+        # Layer-2 cache (off by default in tests): reuse the normalised result for
+        # an identical query against the same dataset revision. Keyed by the
+        # dataset path + mtime so a rebuilt dataset never serves stale features.
+        cache = None
+        cache_key = None
+        if cache_is_enabled():
+            try:
+                mtime = Path(descriptor.path).stat().st_mtime
+            except OSError:
+                mtime = None
+            if mtime is not None:
+                cache = get_cache()
+                cache_key = {
+                    "provider": "local_osm",
+                    "path": descriptor.path,
+                    "mtime": mtime,
+                    "bbox": [float(south), float(west), float(north), float(east)],
+                    "buffer": self.query_buffer_m,
+                    "layers": list(self.layers),
+                }
+                cached = cache.get(
+                    "local_osm",
+                    cache_key,
+                    ttl_seconds=int(getattr(settings, "LOCAL_OSM_CACHE_TTL_S", 3600)),
+                )
+                if isinstance(cached, dict):
+                    return LandContextResult(
+                        bbox=bbox,
+                        water_bodies=cached.get("water_bodies", []),
+                        roads=cached.get("roads", []),
+                        buildings=cached.get("buildings", []),
+                        source=SOURCE_TEMPLATE.format(path=Path(descriptor.path).name),
+                        provider=self.name,
+                        status=cached.get("status", STATUS_AVAILABLE),
+                        coverage=relation,
+                        feature_counts=cached.get("feature_counts"),
+                    )
 
         stack = _geostack()
         if stack is None:  # pragma: no cover - guarded by descriptor.readable
@@ -323,6 +372,21 @@ class LocalOSMProvider(LandProvider):
             "local_osm_query",
             extra={"counts": counts, "elapsed_ms": round(elapsed_ms, 2), "status": status},
         )
+        if cache is not None and cache_key is not None:
+            try:
+                cache.set(
+                    "local_osm",
+                    cache_key,
+                    {
+                        "status": status,
+                        "feature_counts": counts,
+                        "water_bodies": result.water_bodies,
+                        "roads": result.roads,
+                        "buildings": result.buildings,
+                    },
+                )
+            except Exception:  # pragma: no cover - cache write is best-effort
+                pass
         return result
 
 
@@ -335,13 +399,14 @@ def _coords_lonlat(ring) -> List[Dict[str, float]]:
 
 
 def _geometry_parts(geometry) -> List[Any]:
+    """Flatten any (possibly nested) collection into atomic geometries."""
+
     geom_type = getattr(geometry, "geom_type", "")
-    if geom_type == "MultiPolygon":
-        return list(geometry.geoms)
-    if geom_type == "MultiLineString":
-        return list(geometry.geoms)
-    if geom_type == "GeometryCollection":
-        return [part for part in geometry.geoms if not part.is_empty]
+    if geom_type in {"MultiPolygon", "MultiLineString", "GeometryCollection"}:
+        parts: List[Any] = []
+        for part in geometry.geoms:
+            parts.extend(_geometry_parts(part))
+        return [part for part in parts if not getattr(part, "is_empty", False)]
     return [geometry]
 
 
@@ -366,7 +431,17 @@ def _element_for_part(part, osm_id: str, osm_type: str, tags: Dict[str, Any], in
         coordinates = _coords_lonlat(part.exterior.coords)
         if len(coordinates) < 4:
             return None
-        return {"type": osm_type, "id": element_id, "tags": dict(tags), "geometry": coordinates}
+        element = {"type": osm_type, "id": element_id, "tags": dict(tags), "geometry": coordinates}
+        holes = [
+            _coords_lonlat(ring.coords)
+            for ring in part.interiors
+            if len(ring.coords) >= 4
+        ]
+        if holes:
+            # Interior rings are preserved so downstream containment/distance math
+            # treats a hole as *not* part of the feature.
+            element["holes"] = holes
+        return element
     return None
 
 

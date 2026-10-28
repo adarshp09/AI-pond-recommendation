@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import logging
 import os
 import time
@@ -10,6 +11,7 @@ import numpy as np
 from dotenv import load_dotenv
 
 from config import settings
+from services.cache import cache_is_enabled, get_cache
 
 load_dotenv()
 
@@ -78,6 +80,30 @@ class OpenTopographyService:
             write=self.read_timeout,
             pool=self.connect_timeout,
         )
+
+        # Layer-1 cache: the raw GeoTIFF bytes for this (dataset, bbox). Re-parsed
+        # per call, but the expensive download is skipped. The API key is NOT part
+        # of the key (never cached, never leaked via the key).
+        cache_key = {
+            "provider": "opentopography",
+            "dataset": self.dataset,
+            "south": float(south),
+            "north": float(north),
+            "west": float(west),
+            "east": float(east),
+            "output_format": "GTiff",
+        }
+        dem_cache_ttl = int(getattr(settings, "OPENTOPOGRAPHY_CACHE_TTL_S", 60 * 60 * 24 * 30))
+        if cache_is_enabled():
+            cached = get_cache().get("opentopography_dem", cache_key, ttl_seconds=dem_cache_ttl)
+            if isinstance(cached, dict) and cached.get("b64"):
+                try:
+                    cached_bytes = base64.b64decode(cached["b64"])
+                except Exception:
+                    cached_bytes = None
+                if cached_bytes:
+                    logger.info("opentopography_cache_hit")
+                    return self._parse_geotiff(cached_bytes, south, north, west, east)
 
         last_error: Optional[Exception] = None
         for attempt in range(self.max_retries + 1):
@@ -188,6 +214,15 @@ class OpenTopographyService:
                 "opentopography_success",
                 extra={"elapsed_ms": round(elapsed_ms, 2)},
             )
+            if cache_is_enabled():
+                try:
+                    get_cache().set(
+                        "opentopography_dem",
+                        cache_key,
+                        {"b64": base64.b64encode(response.content).decode("ascii")},
+                    )
+                except Exception:  # pragma: no cover - cache write is best-effort
+                    pass
             return self._parse_geotiff(response.content, south, north, west, east)
 
         # All retries exhausted

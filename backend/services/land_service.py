@@ -30,6 +30,12 @@ except ImportError:  # pragma: no cover - alternative import path
 logger = logging.getLogger(__name__)
 
 # Provider modes (Phase 03 selection policy).
+#
+# DEPRECATED FOR RUNTIME — the Overpass chain in this module is retained ONLY for
+# offline extraction/benchmark tooling. The service runs local-only by default
+# (`LAND_PROVIDER_MODE=local_only`, `OVERPASS_FALLBACK_ENABLED=false`), so Overpass
+# is never queried during a request. Use `mode=MODE_OVERPASS_ONLY` explicitly from
+# scripts (api_smoke_test.py / benchmark_land_providers.py) if you need it.
 MODE_LOCAL_FIRST = "local_first"
 MODE_LOCAL_ONLY = "local_only"
 MODE_OVERPASS_ONLY = "overpass_only"
@@ -260,6 +266,10 @@ def _fetch_overpass(
 ) -> LandContextResult:
     """Query the Overpass provider chain. Returns a normalised result.
 
+    DEPRECATED FOR RUNTIME — only reached via ``mode="overpass_only"`` (offline
+    tooling). With the default ``local_only`` + ``OVERPASS_FALLBACK_ENABLED=false``
+    this is never called by the API.
+
     Never raises: an all-providers failure is returned as an ``unavailable`` result
     with an explicit warning (the core analysis continues).
     """
@@ -319,8 +329,10 @@ def _fetch_overpass(
 
 
 def _resolve_mode(mode: str | None) -> str:
-    resolved = (mode or settings.LAND_PROVIDER_MODE or MODE_LOCAL_FIRST).strip().lower()
-    return resolved if resolved in _VALID_MODES else MODE_LOCAL_FIRST
+    # Default is local_only (Phase 03): runtime enrichment is served from the
+    # local GeoPackage and never contacts Overpass unless explicitly requested.
+    resolved = (mode or settings.LAND_PROVIDER_MODE or MODE_LOCAL_ONLY).strip().lower()
+    return resolved if resolved in _VALID_MODES else MODE_LOCAL_ONLY
 
 
 def _build_local_provider() -> Optional[LocalOSMProvider]:

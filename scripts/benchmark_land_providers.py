@@ -6,6 +6,10 @@ Compares feature counts and latency for the same bounding boxes using:
 * ``local_only``     — the prepared GeoPackage (offline, deterministic)
 * ``overpass_only``  — the live Overpass provider chain (network)
 
+NOTE: ``overpass_only`` is an OFFLINE TOOLING path only. The running service never
+contacts Overpass (default ``LAND_PROVIDER_MODE=local_only``); the Overpass chain is
+retained solely for explicit comparison/benchmark runs like this one.
+
 Run after preparing a dataset (``scripts/prepare_osm_data.py``)::
 
     python scripts/benchmark_land_providers.py

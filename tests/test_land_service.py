@@ -5,6 +5,7 @@ import httpx
 
 from services.land_service import (
     LandError,
+    MODE_OVERPASS_ONLY,
     _build_overpass_query,
     fetch_land_context,
     PermanentError,
@@ -31,7 +32,7 @@ def test_fetch_land_context_parses_overpass_response():
     }
 
     with patch("services.land_service.httpx.post", return_value=response):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
 
     assert data["water_bodies"][0]["tags"]["water"] == "pond"
     assert data["roads"][0]["tags"]["highway"] == "primary"
@@ -46,7 +47,7 @@ def test_fetch_land_context_rejects_invalid_bbox():
 
 def test_fetch_land_context_handles_network_failure():
     with patch("services.land_service.httpx.post", side_effect=httpx.ConnectTimeout("timeout")):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
         assert data["water_bodies"] == []
         assert data["roads"] == []
         assert data["buildings"] == []
@@ -60,7 +61,7 @@ def test_fetch_land_context_primary_success():
     response.json.return_value = {"elements": [{"type": "way", "id": 1, "tags": {"water": "pond"}}]}
 
     with patch("services.land_service.httpx.post", return_value=response):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
 
     assert data["water_bodies"][0]["tags"]["water"] == "pond"
     assert "primary" in data["source"]
@@ -84,7 +85,7 @@ def test_fetch_land_context_primary_failure_fallback_success():
             return response
 
     with patch("services.land_service.httpx.post", side_effect=mock_post):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
 
     assert data["roads"][0]["tags"]["highway"] == "primary"
     assert "fallback" in data["source"]
@@ -96,7 +97,7 @@ def test_fetch_land_context_all_providers_fail():
         raise httpx.NetworkError("Network unreachable")
 
     with patch("services.land_service.httpx.post", side_effect=mock_post):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
         assert data["water_bodies"] == []
         assert data["roads"] == []
         assert data["buildings"] == []
@@ -117,7 +118,7 @@ def test_fetch_land_context_retries_then_success():
         return response
 
     with patch("services.land_service.httpx.post", side_effect=mock_post):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
 
     assert data["water_bodies"][0]["tags"]["water"] == "pond"
     assert attempts[0] == 3  # Initial + 2 retries
@@ -131,7 +132,7 @@ def test_fetch_land_context_4xx_no_retry():
     response.raise_for_status.side_effect = httpx.HTTPStatusError("400", request=MagicMock(), response=response)
 
     with patch("services.land_service.httpx.post", return_value=response):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
         assert data["water_bodies"] == []
         assert data["roads"] == []
         assert data["buildings"] == []
@@ -159,7 +160,7 @@ def test_fetch_land_context_rate_limit_falls_back():
         return response
 
     with patch("services.land_service.httpx.post", side_effect=mock_post):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
 
     assert data["roads"][0]["tags"]["highway"] == "primary"
     assert "fallback" in data["source"]
@@ -187,7 +188,7 @@ def test_fetch_land_context_5xx_retries():
         return response
 
     with patch("services.land_service.httpx.post", side_effect=mock_post):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
 
     assert data["water_bodies"][0]["tags"]["water"] == "pond"
     assert attempts[0] == 3  # Primary fails twice, fallback succeeds on second attempt
@@ -200,7 +201,7 @@ def test_fetch_land_context_timeout_configurable():
     response.json.return_value = {"elements": []}
 
     with patch("services.land_service.httpx.post", return_value=response) as mock:
-        fetch_land_context(21.24, 81.28, 21.27, 81.31, connect_timeout=10.0, read_timeout=15.0)
+        fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY, connect_timeout=10.0, read_timeout=15.0)
 
     # Check that the timeout was passed to httpx.post
     call_kwargs = mock.call_args[1]
@@ -223,7 +224,7 @@ def test_fetch_land_context_provider_deduplication():
     response.json.return_value = {"elements": []}
 
     with patch("services.land_service.httpx.post", return_value=response):
-        data = fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        data = fetch_land_context(21.24, 81.28, 21.27, 81.31, mode=MODE_OVERPASS_ONLY)
 
     # Only one provider attempted
     assert "primary" in data["source"]

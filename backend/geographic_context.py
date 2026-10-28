@@ -303,6 +303,31 @@ def _bboxes_equal(left: Sequence[float], right: Sequence[float]) -> bool:
 # Geometry construction
 # ---------------------------------------------------------------------------
 
+def _element_holes(element: Dict[str, Any]) -> List[Any]:
+    """Interior rings (holes) on a provider element, as WGS84 coordinate rings.
+
+    Providers may attach ``holes`` (list of ``[{lat,lon}, ...]`` rings) so that a
+    point inside a hole is correctly treated as *outside* the feature. Elements
+    without ``holes`` behave exactly as before.
+    """
+
+    rings = element.get("holes")
+    if not rings or not isinstance(rings, list):
+        return []
+    result: List[Any] = []
+    for ring in rings:
+        if not isinstance(ring, list):
+            continue
+        points = [
+            (float(item["lon"]), float(item["lat"]))
+            for item in ring
+            if isinstance(item, dict) and "lon" in item and "lat" in item
+        ]
+        if len(points) >= 4:
+            result.append(points)
+    return result
+
+
 def _element_geometry(element: Dict[str, Any], kind: str) -> Optional[Any]:
     """Build a WGS84 geometry from an Overpass element (never fabricates one)."""
 
@@ -318,7 +343,8 @@ def _element_geometry(element: Dict[str, Any], kind: str) -> Optional[Any]:
             # Roads stay lines even when closed; areas become polygons.
             if kind != "road" and closed and len(points) >= 4:
                 try:
-                    return Polygon(points)
+                    holes = _element_holes(element)
+                    return Polygon(points, holes) if holes else Polygon(points)
                 except Exception:
                     return None
             return LineString(points)
@@ -414,9 +440,9 @@ def _land_provider_mode() -> str:
     try:
         from config import settings
 
-        return str(getattr(settings, "LAND_PROVIDER_MODE", "local_first"))
+        return str(getattr(settings, "LAND_PROVIDER_MODE", "local_only"))
     except Exception:  # pragma: no cover - defensive
-        return "local_first"
+        return "local_only"
 
 
 def _fetch_with_retries(

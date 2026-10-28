@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 @dataclass
@@ -174,3 +174,28 @@ class LocationAnalysisRequest(BaseModel):
     latitude: float = Field(..., ge=-90.0, le=90.0)
     longitude: float = Field(..., ge=-180.0, le=180.0)
     radius_km: float = Field(..., gt=0.0, le=100.0)
+
+
+class _AnalysisResponseBase(BaseModel):
+    """Common shape for the analysis responses (Phase 05).
+
+    Documentation/contract model only: the endpoints return plain dicts, so this
+    does not constrain the live payload. ``warnings`` is optional and defaults to
+    an empty list; extra fields are permitted so the model never rejects existing
+    keys.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    status: str = "success"
+    warnings: List[str] = Field(default_factory=list)
+    error_code: Optional[str] = None
+    message: Optional[str] = None
+
+
+class AnalyzeContourResponse(_AnalysisResponseBase):
+    """/analyzeContour response schema (documented contract)."""
+
+
+class AnalyzeLocationResponse(_AnalysisResponseBase):
+    """/analyzeLocation response schema (documented contract)."""

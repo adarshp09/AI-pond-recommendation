@@ -1,0 +1,22 @@
+# Native (no Docker) extras for a bare host such as sys1.
+#
+#   pip install -r requirements-native.txt      # == requirements.txt + these
+#
+# scripts/setup_sys1.sh deps already installs everything here, so this file is
+# mainly documentation of the packages that are needed natively but intentionally
+# kept out of the container requirements.txt.
+#
+# System libraries: pyogrio / rasterio publish manylinux wheels that bundle GDAL,
+# GEOS and PROJ, so a plain pip install works on most distros. Install the -dev
+# packages (libgdal-dev, libgeos-dev, libproj-dev) only if pip must build from
+# source: scripts/setup_sys1.sh system-deps lists the full apt set.
+-r requirements.txt
+
+# pyogrio — required at runtime by the local GeoPackage land provider
+# (backend/services/land_providers/local_osm.py) and the river exclusion filter
+# (backend/utils/spatial_filter.py).
+pyogrio
+
+# osmium (pyosmium) — required only to (re)prepare the local dataset
+# (scripts/prepare_osm_data.py). Not needed to just run the server.
+osmium

@@ -1,0 +1,40 @@
+# Build context exclusions (Phase 06).
+.git
+.gitignore
+.github
+.commandcode
+.vscode
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.tox/
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+
+# Large / generated geographic data — mounted at runtime via ./data, not baked in
+data/osm/raw/
+data/osm/prepared/
+*.gpkg
+*.gpkg-journal
+*.gpkg-wal
+*.osm.pbf
+*.osm.bz2
+
+# Caches / logs / docs / benchmarks
+.cache/
+benchmarks/.geocache/
+docs/
+benchmarks/
+*.log
+result.json
+
+# Tests are not needed in the runtime image
+tests/

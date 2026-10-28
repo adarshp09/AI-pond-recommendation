@@ -421,7 +421,9 @@ def test_land_service_classifies_natural_water():
         ]
     }
     with patch("services.land_service.httpx.post", return_value=response):
-        data = real_fetch_land_context(21.24, 81.28, 21.27, 81.31)
+        # Runtime default is local-only; pin the explicit Overpass mode for this
+        # provider-classification test.
+        data = real_fetch_land_context(21.24, 81.28, 21.27, 81.31, mode="overpass_only")
 
     assert {element["id"] for element in data["water_bodies"]} == {1, 2}
     assert data["roads"][0]["id"] == 3

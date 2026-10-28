@@ -90,24 +90,28 @@ class FileCache:
         self._current_size -= file_size
         del self._lru[lru_file]
 
-    def get(self, prefix: str, payload: Any) -> Any:
+    def get(self, prefix: str, payload: Any, ttl_seconds: int | None = None) -> Any:
         if not self.enabled:
             return None
         cache_path = self.cache_dir / self._make_key(prefix, payload)
         if not cache_path.exists():
+            record_cache_miss()
             return None
         try:
             entry = json.loads(cache_path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
+            record_cache_miss()
             return None
         timestamp = float(entry.get("timestamp", 0.0))
-        if time.time() - timestamp > self.ttl_seconds:
+        effective_ttl = self.ttl_seconds if ttl_seconds is None else int(ttl_seconds)
+        if time.time() - timestamp > effective_ttl:
             try:
                 cache_path.unlink(missing_ok=True)
             except OSError:
                 pass
             with self._lru_lock:
                 self._lru.pop(cache_path.name, None)
+            record_cache_miss()
             return None
         # Update LRU on successful access
         try:
@@ -115,6 +119,7 @@ class FileCache:
             self._update_lru(cache_path.name, file_size)
         except OSError:
             pass
+        record_cache_hit()
         return entry.get("value")
 
     def set(self, prefix: str, payload: Any, value: Any) -> None:
@@ -230,3 +235,100 @@ def cached_response(prefix: str, payload: Any, value_factory, *, cache_dir: str 
 
 def cache_bypass() -> bool:
     return os.getenv("CACHE_BYPASS", "0").lower() in {"1", "true", "yes", "on"}
+
+
+# In-memory hit/miss counters (Phase 05). Process-local, monotonic until reset;
+# exposed via GET /cache/stats. Never persisted.
+_CACHE_METRICS = {"hits": 0, "misses": 0}
+_CACHE_METRICS_LOCK = threading.Lock()
+
+
+def record_cache_hit() -> None:
+    with _CACHE_METRICS_LOCK:
+        _CACHE_METRICS["hits"] += 1
+
+
+def record_cache_miss() -> None:
+    with _CACHE_METRICS_LOCK:
+        _CACHE_METRICS["misses"] += 1
+
+
+def cache_metrics() -> dict:
+    with _CACHE_METRICS_LOCK:
+        hits = _CACHE_METRICS["hits"]
+        misses = _CACHE_METRICS["misses"]
+    total = hits + misses
+    return {
+        "hits": hits,
+        "misses": misses,
+        "hit_rate": (float(hits) / total) if total else None,
+    }
+
+
+def reset_cache_metrics() -> None:
+    with _CACHE_METRICS_LOCK:
+        _CACHE_METRICS["hits"] = 0
+        _CACHE_METRICS["misses"] = 0
+
+
+def cache_is_enabled() -> bool:
+    """Honour ``config.settings.CACHE_ENABLED`` (resolved at call time) + bypass env.
+
+    Resolving at call time means tests/operators can disable caching without
+    re-importing the module, and providers gate on this instead of the cached
+    singleton's construction-time ``enabled`` flag.
+    """
+
+    try:
+        from config import settings
+
+        enabled = bool(getattr(settings, "CACHE_ENABLED", True))
+    except Exception:  # pragma: no cover - defensive
+        enabled = True
+    return enabled and not cache_bypass()
+
+
+# Per-key in-process single-flight locks: concurrent callers computing the same
+# cache key share one computation instead of stampeding the provider.
+_SINGLEFLIGHT_LOCKS: Dict[str, threading.Lock] = {}
+_SINGLEFLIGHT_GUARD = threading.Lock()
+
+
+def _singleflight_lock(filename: str) -> threading.Lock:
+    with _SINGLEFLIGHT_GUARD:
+        lock = _SINGLEFLIGHT_LOCKS.get(filename)
+        if lock is None:
+            lock = threading.Lock()
+            _SINGLEFLIGHT_LOCKS[filename] = lock
+        return lock
+
+
+def get_or_set(
+    prefix: str,
+    payload: Any,
+    value_factory,
+    *,
+    ttl_seconds: int | None = None,
+    cache: "FileCache | None" = None,
+):
+    """Return the cached value for ``(prefix, payload)`` or compute and store it.
+
+    * No caching (``CACHE_ENABLED`` false / bypass) => the factory is called directly.
+    * A cache miss computes under a per-key lock so N concurrent callers perform
+      one provider call (single-flight), then store the value.
+    * Only successful values are stored; if ``value_factory`` raises, nothing is
+      cached and the exception propagates (failures are never cached as success).
+    """
+
+    if not cache_is_enabled():
+        return value_factory()
+
+    active_cache = cache if cache is not None else get_cache()
+    filename = active_cache._make_key(prefix, payload)
+    with _singleflight_lock(filename):
+        cached = active_cache.get(prefix, payload, ttl_seconds=ttl_seconds)
+        if cached is not None:
+            return cached
+        value = value_factory()
+        active_cache.set(prefix, payload, value)
+        return value

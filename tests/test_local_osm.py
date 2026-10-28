@@ -57,7 +57,7 @@ def _square(lon: float, lat: float, half: float = 0.001) -> Polygon:
     ])
 
 
-def _write_gpkg(path, *, generated_at: str | None = None, study_area=STUDY, layers=("water_areas", "waterways", "roads", "buildings")):
+def _write_gpkg(path, *, generated_at: str | None = None, study_area=STUDY, layers=("water_areas", "waterways", "roads", "buildings"), water_geometry=None):
     gpd = pytest.importorskip("geopandas")
     import pyogrio
 
@@ -65,7 +65,7 @@ def _write_gpkg(path, *, generated_at: str | None = None, study_area=STUDY, laye
         if layer == "water_areas":
             frame = gpd.GeoDataFrame(
                 {"osm_id": ["1"], "osm_type": ["way"], "tags": [json.dumps({"natural": "water"})]},
-                geometry=[_square(LON, LAT)],
+                geometry=[water_geometry if water_geometry is not None else _square(LON, LAT)],
                 crs="EPSG:4326",
             )
         elif layer == "waterways":
@@ -263,6 +263,36 @@ def test_descriptor_cache_is_reused(dataset):
     first = dataset.describe()
     second = dataset.describe()
     assert first == second
+
+
+def test_interior_rings_survive_gpkg_roundtrip(tmp_path):
+    """A polygon hole in the GeoPackage is preserved on the element contract."""
+    from shapely.geometry import Polygon
+
+    gpkg = tmp_path / "holes.gpkg"
+    holed = Polygon(
+        [(LON - 0.002, LAT - 0.002), (LON + 0.002, LAT - 0.002), (LON + 0.002, LAT + 0.002), (LON - 0.002, LAT + 0.002), (LON - 0.002, LAT - 0.002)],
+        [[(LON - 0.0005, LAT - 0.0005), (LON + 0.0005, LAT - 0.0005), (LON + 0.0005, LAT + 0.0005), (LON - 0.0005, LAT + 0.0005), (LON - 0.0005, LAT - 0.0005)]],
+    )
+    _write_gpkg(gpkg, water_geometry=holed)
+    provider = LocalOSMProvider(gpkg, manifest_path=tmp_path / "manifest.json", max_age_days=180)
+
+    result = provider.fetch(21.24, 81.28, 21.27, 81.31)
+    water = result.water_bodies[0]
+    assert "holes" in water and len(water["holes"]) == 1
+    assert len(water["geometry"]) >= 4
+
+
+def test_dataset_missing_required_layer_is_unreadable(tmp_path):
+    gpkg = tmp_path / "partial.gpkg"
+    _write_gpkg(gpkg, layers=("water_areas", "waterways", "roads"))  # no buildings layer
+    provider = LocalOSMProvider(gpkg, manifest_path=tmp_path / "manifest.json")
+
+    assert provider.available() is False
+    assert "missing layers" in provider.describe()["error"]
+    with pytest.raises(ProviderUnavailable) as exc:
+        provider.fetch(21.24, 81.28, 21.27, 81.31)
+    assert exc.value.status == STATUS_UNREADABLE
 
 
 # ---------------------------------------------------------------------------

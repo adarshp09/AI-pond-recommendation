@@ -185,7 +185,7 @@ def test_retry_exhaustion_is_bounded(monkeypatch):
 def test_connect_and_read_timeouts_are_applied():
     fake = FakeLocal(error=ProviderUnavailable(STATUS_MISSING, "no dataset"))
     with patch("services.land_service.httpx.post", return_value=overpass_response()) as mock:
-        fetch_land_context(*BBOX, connect_timeout=7.0, read_timeout=11.0, local_provider=fake)
+        fetch_land_context(*BBOX, mode=MODE_LOCAL_FIRST, connect_timeout=7.0, read_timeout=11.0, local_provider=fake)
 
     timeout = mock.call_args[1]["timeout"]
     assert timeout.connect == 7.0

@@ -173,3 +173,52 @@ def test_rejection_constraints_are_exposed():
 
     assert DEFAULT_REJECTION_CONSTRAINTS["max_slope_degrees"] > 0
     assert "min_catchment_area_m2" in DEFAULT_REJECTION_CONSTRAINTS
+
+
+# ---------------------------------------------------------------------------
+# Phase 1 — nested candidate schema + suitability invariants
+# ---------------------------------------------------------------------------
+
+POND_CANDIDATE_KEYS = {
+    "id",
+    "label",
+    "latitude",
+    "longitude",
+    "elevation_m",
+    "slope_degrees",
+    "catchment_area_m2",
+    "catchment_area",
+    "suitability_score",
+}
+
+
+def test_pond_candidate_schema_is_locked_for_contour(client):
+    filename, data = fixtures.build_all()["valid_kml"]
+    payload = client.post(
+        "/analyzeContour", files={"file": (filename, data, "application/xml")}
+    ).json()
+    assert set(payload["pond_candidate"].keys()) == POND_CANDIDATE_KEYS
+
+
+def test_pond_candidate_schema_is_locked_for_location(client):
+    payload = client.post(
+        "/analyzeLocation", json={"latitude": 21.2, "longitude": 81.4, "radius_km": 10}
+    ).json()
+    assert set(payload["pond_candidate"].keys()) == POND_CANDIDATE_KEYS
+
+
+def test_suitability_scores_are_bounded_for_both_endpoints(client):
+    filename, data = fixtures.build_all()["valid_kml"]
+    contour = client.post(
+        "/analyzeContour", files={"file": (filename, data, "application/xml")}
+    ).json()
+    location = client.post(
+        "/analyzeLocation", json={"latitude": 21.2, "longitude": 81.4, "radius_km": 10}
+    ).json()
+
+    for payload in (contour, location):
+        suitability = payload["suitability"]
+        assert 0.0 <= suitability["overall_score"] <= 1.0
+        assert sum(suitability["weights"].values()) == pytest.approx(1.0, abs=1e-9)
+        for value in suitability["component_scores"].values():
+            assert 0.0 <= value <= 1.0

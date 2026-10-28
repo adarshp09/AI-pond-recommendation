@@ -178,7 +178,7 @@ AI pond recommendation/
 │   ├── index.html              # Leaflet map + upload form
 │   ├── app.js                  # Map, upload, results rendering
 │   └── style.css
-├── tests/                      # 330+ tests
+├── tests/                      # 530+ tests (unit + integration, fully offline)
 │   ├── test_*.py               # Unit + integration tests
 │   ├── conftest.py             # Fixtures
 │   └── fixtures.py             # Test data generators
@@ -228,7 +228,16 @@ Create `.env` from `.env.example`:
 # Required
 OPENTOPOGRAPHY_API_KEY=your_key_here
 
-# Overpass (optional - has defaults)
+# Geographic data (Phase 03): local-only at runtime.
+# Runtime land-context enrichment (roads, buildings, water bodies, streams) is
+# served from the prepared local GeoPackage; Overpass is NOT queried at runtime.
+LAND_PROVIDER_MODE=local_only
+LOCAL_OSM_ENABLED=true
+LOCAL_OSM_GPKG_PATH=data/osm/prepared/land_context.gpkg
+LOCAL_OSM_MANIFEST_PATH=data/osm/manifest.json
+OVERPASS_FALLBACK_ENABLED=false
+
+# Overpass (only used by explicit offline tools, mode="overpass_only")
 OVERPASS_URL=https://overpass-api.de/api/interpreter
 OVERPASS_FALLBACK_URL=https://overpass.kumi.systems/api/interpreter
 OVERPASS_TIMEOUT_SECONDS=25.0
@@ -257,6 +266,22 @@ POND_RUNOFF_COEFFICIENT=0.3
 POND_SEASONAL_MONTHS=6,7,8,9
 POND_RAINFALL_YEARS=5
 POND_RAINFALL_CACHE_TTL_S=2592000
+
+# Recommendation engine (Phase 02, opt-in)
+# false => legacy heuristic pipeline (default, production-safe)
+# true  => tested engine (candidates -> geographic context -> rainfall/runoff
+#          -> recommendation engine) with real distances, feasibility, confidence
+POND_RECOMMENDATION_ENGINE=false
+
+# Logging (Phase 05): "text" for local dev, "json" for production
+LOG_FORMAT=text
+
+# Cache (Phase 04): disk FileCache in CACHE_DIR; per-provider TTLs above
+CACHE_ENABLED=true
+CACHE_DIR=.cache
+
+# Optional admin token required by POST /cache/clear (empty = open in dev)
+CACHE_ADMIN_TOKEN=
 ```
 
 ---
@@ -274,7 +299,166 @@ uvicorn backend.main:app --host 0.0.0.0 --port 6000 --workers 4
 POND_INSTRUMENTATION=1 uvicorn backend.main:app --reload
 ```
 
-### Frontend
+---
+
+## Docker Deployment
+
+A multi-stage image (non-root `appuser`, GDAL/GEOS/PROJ system libs, `uvicorn`
+on `:8000`) and a compose file are provided.
+
+```bash
+# build + start in the background
+docker compose up -d
+
+# check readiness (health probe targets /health/datasets)
+docker compose ps
+curl -f http://localhost:8000/health
+
+# logs / stop
+docker compose logs -f backend
+docker compose down
+```
+
+The compose service applies production hardening by default:
+
+| Setting | Value |
+|---|---|
+| `LOG_FORMAT` | `json` |
+| `LAND_PROVIDER_MODE` | `local_only` |
+| `OVERPASS_FALLBACK_ENABLED` | `false` |
+| `CACHE_ENABLED` | `true` |
+| `CACHE_DIR` | `/app/.cache` |
+
+Volumes: `./data:/app/data` (the prepared GeoPackage + manifest) and the named
+volume `cache_data:/app/.cache` (persistent L2 `FileCache`). `OPENTOPOGRAPHY_API_KEY`
+is passed through from your shell (`export OPENTOPOGRAPHY_API_KEY=...`) and is only
+needed by `/analyzeLocation`.
+
+See [`docs/osm_setup.md`](docs/osm_setup.md) for preparing `data/osm/prepared/land_context.gpkg`.
+
+---
+
+## Running Natively on sys1 (Without Docker)
+
+sys1 has no working Docker, and this app does not need it: it runs as a single
+`uvicorn` process with a disk cache and a local GeoPackage. There is **no
+database and no Redis**, so there are no `db:5432` / `redis:6379` URLs to remap.
+
+A `Makefile` and `scripts/setup_sys1.sh` wrap the whole flow.
+
+### 1. System packages (once)
+
+```bash
+make system-deps     # or: scripts/setup_sys1.sh system-deps (uses sudo if present)
+# equivalent:
+sudo apt-get install -y python3 python3-venv python3-dev \
+  build-essential curl libgdal-dev libgeos-dev libproj-dev
+```
+
+`pyogrio`/`rasterio` publish wheels that bundle GDAL/GEOS/PROJ, so the `-dev`
+packages are only needed when pip has to build from source.
+
+### 2. Python environment
+
+```bash
+make install         # == scripts/setup_sys1.sh deps
+```
+
+Creates `.venv` using the distro `python3` (not a login-shell Python) and
+installs `requirements.txt` plus the native extras listed in
+[`requirements-native.txt`](requirements-native.txt) (`pyogrio`, `osmium`,
+`rasterio`).
+
+### 3. Environment file
+
+```bash
+make env                                   # copies .env.example -> .env
+scripts/setup_sys1.sh env --api-key <KEY>  # or set the key directly
+```
+
+`OPENTOPOGRAPHY_API_KEY` is only required by `/analyzeLocation`.
+
+### 4. Local geographic dataset
+
+`data/osm/prepared/land_context.gpkg` is **git-ignored**, so a fresh clone does
+not have it:
+
+```bash
+make dataset         # Geofabrik download + GeoPackage preparation (slow)
+```
+
+### 5. Run
+
+```bash
+make run             # API :6000 + UI :5000 (UI proxies the API)
+make run-single      # API+UI on one port :5000 — best behind NAT
+make status          # running processes + endpoint probes
+make stop
+```
+
+Overridable with `API_PORT`, `WEB_PORT`, `SINGLE_PORT=1`, `VENV`, `LOG_DIR`.
+
+### 6. Verify
+
+```bash
+curl -f http://127.0.0.1:6000/health
+curl -f http://127.0.0.1:6000/health/datasets     # dataset present + provider mode
+curl -s http://127.0.0.1:6000/metrics | head      # Prometheus metrics
+```
+
+### Native-mode notes
+
+| Topic | Behaviour |
+|---|---|
+| Database / Redis | None exist — no service URLs to point at `localhost` |
+| Container service host | `config.native_service_url()` rewrites compose hosts (e.g. `jaeger`) to `localhost` unless running inside a container |
+| Container paths | `scripts/setup_sys1.sh start` remaps `/app/...` (`CACHE_DIR`, GeoPackage paths) to the repo root |
+| Tracing | `OTEL_ENABLED=true` needs a collector; without one set it to `false` (`/metrics` still works) |
+
+---
+
+## Cache Maintenance API
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/cache/stats` | Entry count, size, limits, plus `metrics` (`hits`, `misses`, `hit_rate`) |
+| `POST` | `/cache/clear` | Drop all cached entries. If `CACHE_ADMIN_TOKEN` is set, send header `X-Cache-Admin-Token` (else `403`) |
+
+```bash
+curl -s http://localhost:8000/cache/stats | jq
+curl -s -X POST http://localhost:8000/cache/clear
+```
+
+The disk cache lives in `CACHE_DIR` and is safe to delete at any time; entries are
+TTL-scoped per provider (DEM 30 d, rainfall 30 d, geocoding/place search 7 d,
+local OSM 1 h). Around it, providers add bounded retries/backoff, and identical
+concurrent calls share a single in-process computation (single-flight).
+
+---
+
+## Observability
+
+* **Structured JSON logs** — with `LOG_FORMAT=json` the root logger emits one JSON
+  object per line: `{"timestamp", "level", "logger_name", "message", ...extras}`
+  (`backend/utils/observability.py`). Local dev keeps human-readable `text` logs.
+* **Stage timing** — `track_time("stage_name")` (context manager or decorator)
+  logs `{"message": "Stage completed", "stage", "duration_ms"}`.
+* **Health probes** — `GET /health` (liveness) and `GET /health/datasets`
+  (readiness: dataset path, coverage, layers, staleness, active provider mode).
+
+---
+
+## Architecture & Further Docs
+
+* [`docs/architecture.md`](docs/architecture.md) — refactored architecture, spatial
+  enrichment + fallback sequence diagrams.
+* [`docs/osm_setup.md`](docs/osm_setup.md) — build the local OSM GeoPackage and the
+  fail-closed out-of-coverage behaviour.
+* [`docs/baseline.md`](docs/baseline.md) — captured contracts/quirks and the
+  feature-flag defaults.
+
+---
+
 
 Serve `frontend/` with any static server:
 ```bash

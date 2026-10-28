@@ -14,6 +14,8 @@ scipy==1.15.3
 shapely==2.1.1
 pyproj==3.7.1
 geopandas==1.1.1
+# Required to read OpenTopography GeoTIFF DEM responses (/analyzeLocation)
+rasterio==1.4.4
 
 # KML/KMZ parsing
 lxml==6.0.0
@@ -25,3 +27,10 @@ httpx==0.28.1
 # Testing
 pytest==8.4.1
 pytest-asyncio==1.1.0
+
+# Observability (Phase 08) — OpenTelemetry tracing + Prometheus metrics
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+opentelemetry-exporter-otlp-proto-http>=1.20.0
+opentelemetry-instrumentation-fastapi>=0.41b0
+prometheus-client>=0.17.0

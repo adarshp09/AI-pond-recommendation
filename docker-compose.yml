@@ -1,0 +1,59 @@
+# AI Pond Recommendation — production compose (Phase 06).
+#
+#   docker compose up --build
+#   open http://localhost:8000/
+#
+# The backend serves the API (and the static UI at /ui) on a single port.
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ai-pond-recommendation:local
+    container_name: pond-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Production hardening defaults (Phase 06).
+      LOG_FORMAT: json
+      LAND_PROVIDER_MODE: local_only
+      OVERPASS_FALLBACK_ENABLED: "false"
+      CACHE_ENABLED: "true"
+      CACHE_DIR: /app/.cache
+      LOCAL_OSM_GPKG_PATH: /app/data/osm/prepared/land_context.gpkg
+      LOCAL_OSM_MANIFEST_PATH: /app/data/osm/manifest.json
+      # Phase 08 — tracing/metrics.
+      OTEL_ENABLED: "true"
+      OTEL_SERVICE_NAME: ai-pond-recommendation
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+      PROMETHEUS_METRICS_ENABLED: "true"
+      # Required only for /analyzeLocation (external DEM); optional otherwise.
+      OPENTOPOGRAPHY_API_KEY: ${OPENTOPOGRAPHY_API_KEY:-}
+    depends_on:
+      - jaeger
+    volumes:
+      # Persistent geographic dataset (read at runtime; rw so it can be refreshed).
+      - ./data:/app/data
+      # Persistent Layer-2 FileCache (survives restarts).
+      - cache_data:/app/.cache
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health/datasets || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  # Phase 08 — Jaeger all-in-one: OTLP collector (:4318) + UI (:16686).
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: ai_pond_jaeger
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    restart: unless-stopped
+
+volumes:
+  cache_data:

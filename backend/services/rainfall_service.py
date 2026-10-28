@@ -1,12 +1,17 @@
 from __future__ import annotations
 
-import os
+import time
 from typing import Any, Dict, Optional
 
 import httpx
 from dotenv import load_dotenv
 
+from config import settings
+from services.cache import get_or_set
+
 load_dotenv()
+
+OPEN_METEO_ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 
 
 class RainfallError(Exception):
@@ -18,6 +23,32 @@ def _validate_coordinates(latitude: float, longitude: float) -> None:
         raise RainfallError("latitude must be a numeric value between -90 and 90.")
     if not isinstance(longitude, (int, float)) or not (-180 <= float(longitude) <= 180):
         raise RainfallError("longitude must be a numeric value between -180 and 180.")
+
+
+def _fetch_once(params: Dict[str, Any], timeout: float) -> Dict[str, Any]:
+    try:
+        response = httpx.get(OPEN_METEO_ARCHIVE_URL, params=params, timeout=timeout)
+        response.raise_for_status()
+    except TimeoutError as exc:
+        raise RainfallError(f"Unable to connect to Open-Meteo: timeout ({timeout}s)") from exc
+    except httpx.HTTPError as exc:
+        raise RainfallError(f"Unable to connect to Open-Meteo: {exc}") from exc
+    return response.json()
+
+
+def _build_payload(payload: Dict[str, Any], latitude: float, longitude: float, timezone: str) -> Dict[str, Any]:
+    daily_times = payload.get("daily", {}).get("time", [])
+    daily_values = payload.get("daily", {}).get("precipitation_sum", [])
+
+    return {
+        "latitude": float(payload.get("latitude", latitude)),
+        "longitude": float(payload.get("longitude", longitude)),
+        "timezone": payload.get("timezone", timezone),
+        "daily_rainfall_mm": [float(v) if v is not None else 0.0 for v in daily_values],
+        "daily_dates": list(daily_times),
+        "total_precipitation_mm": float(sum(float(v) for v in daily_values if v is not None)),
+        "source": "Open-Meteo Historical Weather API",
+    }
 
 
 def fetch_historical_rainfall(
@@ -44,28 +75,31 @@ def fetch_historical_rainfall(
         "timezone": timezone,
     }
 
-    try:
-        response = httpx.get(
-            "https://archive-api.open-meteo.com/v1/archive",
-            params=params,
-            timeout=timeout,
-        )
-        response.raise_for_status()
-    except TimeoutError as exc:
-        raise RainfallError(f"Unable to connect to Open-Meteo: timeout ({timeout}s)") from exc
-    except httpx.HTTPError as exc:
-        raise RainfallError(f"Unable to connect to Open-Meteo: {exc}") from exc
-
-    payload = response.json()
-    daily_times = payload.get("daily", {}).get("time", [])
-    daily_values = payload.get("daily", {}).get("precipitation_sum", [])
-
-    return {
-        "latitude": float(payload.get("latitude", latitude)),
-        "longitude": float(payload.get("longitude", longitude)),
-        "timezone": payload.get("timezone", timezone),
-        "daily_rainfall_mm": [float(v) if v is not None else 0.0 for v in daily_values],
-        "daily_dates": list(daily_times),
-        "total_precipitation_mm": float(sum(float(v) for v in daily_values if v is not None)),
-        "source": "Open-Meteo Historical Weather API",
+    cache_key = {
+        "provider": "open_meteo_historical",
+        "latitude": round(float(latitude), 6),
+        "longitude": round(float(longitude), 6),
+        "start_date": start_date,
+        "end_date": end_date,
+        "timezone": timezone,
     }
+
+    def _compute() -> Dict[str, Any]:
+        retries = int(getattr(settings, "RAINFALL_RETRIES", 2))
+        last_error: Optional[RainfallError] = None
+        for attempt in range(retries + 1):
+            try:
+                return _build_payload(_fetch_once(params, timeout), latitude, longitude, timezone)
+            except RainfallError as exc:
+                last_error = exc
+                if attempt < retries:
+                    time.sleep(min(0.1 * (2 ** attempt), 0.5))
+        assert last_error is not None
+        raise last_error
+
+    return get_or_set(
+        "rainfall",
+        cache_key,
+        _compute,
+        ttl_seconds=int(getattr(settings, "RAINFALL_CACHE_TTL_S", 60 * 60 * 24 * 30)),
+    )

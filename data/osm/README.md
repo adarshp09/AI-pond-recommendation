@@ -24,14 +24,29 @@ data/osm/
 
 ## GeoPackage layers (EPSG:4326, spatially indexed)
 
+Default study area: **Durg area (Chhattisgarh, India)** — `south=21.0, west=81.05, north=21.5, east=81.55`.
+
 | Layer | OSM selector | Geometry |
 |---|---|---|
-| `water_areas` | `natural=water`, `landuse∈{reservoir,basin}`, `water=*` | Polygon / MultiPolygon |
-| `waterways` | `waterway=*` | LineString |
-| `roads` | `highway=*` | LineString |
-| `buildings` | `building=*` | Polygon / MultiPoint source → Polygon |
+| `water_areas` | `natural=water`, `landuse∈{reservoir,basin}`, `water=*` | MultiPolygon |
+| `waterways` | `waterway=*` | MultiLineString |
+| `roads` | `highway=*` | MultiLineString |
+| `buildings` | `building=*` | MultiPolygon |
 
 Attribute columns: `osm_id`, `osm_type`, `tags` (JSON of the relevant OSM tags), `geometry`.
+
+## Geometry correctness (Phase 06)
+
+* The bbox clip is **relation-aware**: relations intersecting the study area are kept
+  together with their member ways and those ways' nodes, so GDAL can assemble
+  multipolygon areas instead of losing them.
+* **Interior rings (holes)** are preserved through repair, clipping and writing
+  (`MultiPolygon` layers keep holes), and are emitted by the provider as `holes` on the
+  element contract so a point inside a hole is not treated as inside the feature.
+* Geometry repair is explicit and measurable — `geometry_stats` in `manifest.json`
+  records `candidates`, `invalid`, `repaired`, `duplicates`, `interior_rings` and
+  `skipped` reasons (`empty_geometry`, `outside_study_area`, `repair_failed`,
+  `no_supported_geometry`). Unsupported/failed geometries are dropped, never faked.
 
 ## Reproduce
 
